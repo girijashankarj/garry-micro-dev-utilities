@@ -38,4 +38,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved browser compatibility
 - Better error recovery mechanisms
 
-[1.0.0]: https://github.com/yourusername/garry-openapi-swagger-viewer/releases/tag/v1.0.0
+[1.0.0]: https://github.com/girijashankarj/garry-micro-dev-utilities/releases/tag/v1.0.0

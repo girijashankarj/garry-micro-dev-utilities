@@ -1,8 +1,8 @@
-# Garry OpenAPI Swagger Viewer
+# Garry Micro Dev Utilities
 
 <p align="center">
-  <strong>Single-file Swagger UI viewer</strong><br/>
-  Upload any OpenAPI YAML/JSON and render it instantly in a clean, professional UI.
+  <strong>A collection of small, fast, browser-only developer tools</strong><br/>
+  that solve everyday engineering problems.
 </p>
 
 <p align="center">
@@ -16,226 +16,262 @@
 
 ---
 
-## Overview
+## 🎯 Project Vision
 
-**Garry OpenAPI Swagger Viewer** is a tiny dev utility to render **OpenAPI 3.x** specs using **Swagger UI**.
+**Garry Micro Dev Utilities** is a curated platform of browser-only developer tools inspired by [ilovepdf.com](https://www.ilovepdf.com) but for developers.
 
-It is designed for quick sharing in teams:
-- one HTML file UI
-- one sample OpenAPI spec
-- one README
+### Core Philosophy
 
-No build step. No backend.
+- ✅ **Small, sharp utilities** - Each tool does ONE thing well
+- ✅ **Zero backend** - Everything runs in your browser
+- ✅ **Zero login** - No authentication required
+- ✅ **Zero build complexity** - No bundlers, no compilers
+- ✅ **Maximum daily usefulness** - Tools you'll actually use
 
----
-
-## What this repo contains
-
-| File | Purpose |
-| --- | --- |
-| `openapi-viewer.html` | Main UI: Tailwind + Swagger UI + YAML/JSON upload |
-| `pizza-store.yaml` | Sample Pizza Store CRUD API (9 endpoints) |
-| `README.md` | Documentation |
-| `LICENSE` | MIT License |
-| `package.json` | Project metadata and scripts |
-| `.gitignore` | Git ignore rules |
-| `.github/workflows/` | CI/CD pipelines (GitHub Actions) |
-| `netlify.toml` | Netlify deployment configuration |
-| `vercel.json` | Vercel deployment configuration |
-| `scripts/validate-openapi.js` | OpenAPI spec validation script |
+**This is NOT a SaaS. This is NOT a framework. This is a curated toolbox.**
 
 ---
 
-## Features
-
-- ✅ Upload **.yaml / .yml / .json** OpenAPI files and render instantly
-- ✅ **Load Sample** button to preview quickly (`pizza-store.yaml`)
-- ✅ Clean “LinkedIn-like” professional theme
-- ✅ Runs fully in the browser (no backend required)
-- ✅ No installation, no bundler, no build step
-- ✅ **Production-ready**: Security headers, accessibility, error handling
-- ✅ **Keyboard shortcuts**: Ctrl/Cmd+O to open file, Esc to clear
-- ✅ **File size validation**: 10MB limit with user-friendly errors
-- ✅ **OpenAPI validation**: Validates spec structure before rendering
-- ✅ **Loading states**: Visual feedback during file operations
-- ✅ **Error boundaries**: Graceful error handling and recovery
-
----
-
-## Quick Start
-
-### Recommended (local server)
-`Load Sample` uses `fetch()` so most browsers block it on `file://`.
-
-Run a simple local server:
-
-```bash
-python3 -m http.server 8080
-```
-
-Open:
-
-- `http://localhost:8080/openapi-viewer.html`
-
-Now:
-- Click **Load Sample** to load `pizza-store.yaml`
-- Or upload your own OpenAPI YAML/JSON file
-
-### Alternate (file://)
-You can open `openapi-viewer.html` directly by double-clicking.
-- Upload still works
-- Only **Load Sample** may fail due to browser restrictions
-
----
-
-## Sample API: Pizza Store (9 endpoints)
-
-Included sample spec: `pizza-store.yaml`
-
-Endpoints:
-- `GET /pizzas`
-- `POST /pizzas`
-- `GET /pizzas/{pizzaId}`
-- `PUT /pizzas/{pizzaId}`
-- `DELETE /pizzas/{pizzaId}`
-- `GET /orders`
-- `POST /orders`
-- `GET /orders/{orderId}`
-- `DELETE /orders/{orderId}`
-
----
-
-## CDN Dependencies
-
-This project uses pinned CDN versions for security and stability:
-- **TailwindCSS** 3.4.1 (via CDN)
-- **Swagger UI** 5.17.14 (via unpkg)
-- **js-yaml** 4.1.0 (via jsDelivr)
-- **Font Awesome** 6.5.1 (via Cloudflare CDN)
-
-All dependencies are loaded from reputable CDNs with integrity checks where possible.
-
----
-
-## Production Deployment
-
-> **📖 For detailed deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md)**
-
-### GitHub Pages
-
-**Important:** GitHub Pages must be enabled before the workflow can deploy.
-
-#### Step 1: Enable GitHub Pages
-
-1. Go to: https://github.com/girijashankarj/garry-openapi-swagger-viewer/settings/pages
-2. Under **Source**, select:
-   - **Source**: `Deploy from a branch`
-   - **Branch**: `main`
-   - **Folder**: `/ (root)`
-3. Click **Save**
-4. Wait 1-2 minutes for Pages to initialize
-
-#### Step 2: Deploy
-
-**Automatic (on push):**
-```bash
-git push origin main
-# Check status: https://github.com/girijashankarj/garry-openapi-swagger-viewer/actions
-```
-
-**Manual trigger:**
-- Go to: https://github.com/girijashankarj/garry-openapi-swagger-viewer/actions
-- Select "Deploy to GitHub Pages" → Run workflow
-
-#### Step 3: Access Your Site
-
-After deployment (1-2 minutes), your site will be live at:
-- **https://girijashankarj.github.io/garry-openapi-swagger-viewer/openapi-viewer.html**
-
-### Netlify
-
-1. Connect your repository to Netlify
-2. Build settings:
-   - Build command: `echo "No build step"`
-   - Publish directory: `.`
-3. Deploy!
-
-Or use Netlify CLI:
-```bash
-netlify deploy --prod
-```
-
-### Vercel
-
-1. Import your repository in Vercel dashboard
-2. Vercel will auto-detect settings from `vercel.json`
-3. Deploy!
-
-Or use Vercel CLI:
-```bash
-vercel --prod
-```
-
-### Manual Deployment
-
-Simply upload all files to any static hosting service:
-- AWS S3 + CloudFront
-- Google Cloud Storage
-- Azure Static Web Apps
-- Any web server (nginx, Apache, etc.)
-
----
-
-## Development
+## 🚀 Quick Start
 
 ### Local Development
 
 ```bash
-# Using Python
+# Start a simple HTTP server
 python3 -m http.server 8080
 
-# Using Node.js (if you have http-server installed)
-npx http-server -p 8080
-
-# Using PHP
-php -S localhost:8080
+# Open in browser
+open http://localhost:8080
 ```
 
-Then open `http://localhost:8080/openapi-viewer.html`
+### Production Deployment
 
-### Validation
+**Deployed on GitHub Pages**
 
-Validate OpenAPI specs:
-```bash
-node scripts/validate-openapi.js pizza-store.yaml
+See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed instructions.
+
+**Quick Deploy:**
+1. Enable Pages at: https://github.com/girijashankarj/garry-micro-dev-utilities/settings/pages
+   - Source: `Deploy from a branch`
+   - Branch: `main`
+   - Folder: `/ (root)`
+2. Push to `main` branch
+3. Site will be live at: **https://girijashankarj.github.io/garry-micro-dev-utilities/**
+
+The GitHub Actions workflow will automatically deploy on every push to `main`.
+
+---
+
+## 🛠️ Available Tools
+
+### Tools Overview
+
+```mermaid
+mindmap
+  root((Garry Micro<br/>Dev Utilities))
+    API & Backend
+      OpenAPI Viewer
+      JWT Inspector
+      API Response Diff
+      Curl Visualizer
+      API Risk Analyzer
+    Data & Formats
+      JSON/YAML Formatter
+      CSV Explorer
+    Debugging & Security
+      SQL Explainer
 ```
 
+### API & Backend
+
+| Tool | Status | Description |
+|------|--------|-------------|
+| **OpenAPI Swagger Viewer** | ✅ Available | Upload OpenAPI YAML/JSON and render interactive API documentation |
+| **JWT Inspector** | ✅ Available | Decode and inspect JWT tokens offline. View header, payload, and expiration warnings |
+| **API Response Diff** | ✅ Available | Compare two JSON API responses and highlight semantic differences and breaking changes |
+| **Curl Command Visualizer** | ✅ Available | Parse curl commands, visualize headers/params/body, and convert to Fetch/Axios code |
+| **API Contract Risk Analyzer** | ✅ Available | Analyze OpenAPI specs for missing error responses, weak validation, and breaking change risks |
+
+### Data & Formats
+
+| Tool | Status | Description |
+|------|--------|-------------|
+| **JSON / YAML Formatter** | ✅ Available | Format, validate, minify JSON/YAML. Convert between formats. Copy formatted output |
+| **CSV Explorer** | ✅ Available | Upload CSV files, render as sortable table, search/filter rows, export to JSON |
+
+### Debugging & Security
+
+| Tool | Status | Description |
+|------|--------|-------------|
+| **SQL Query Explainer** | ✅ Available | Explain SQL queries without execution. Detect joins, filters, and potential performance issues |
+
+**Total: 8 tools, all fully functional**
+
 ---
 
-## Security Features
+## 🎨 Design Principles
 
-- ✅ Content Security Policy (CSP) headers
-- ✅ X-Content-Type-Options: nosniff
-- ✅ X-Frame-Options: SAMEORIGIN
-- ✅ X-XSS-Protection enabled
-- ✅ Pinned CDN dependency versions
-- ✅ File size limits (10MB)
-- ✅ Input validation and sanitization
-- ✅ Error boundary for unhandled errors
+### User Experience
 
----
+- **Simple & Clear**: No jargon, self-explanatory interfaces
+- **Fast**: Instant results, no waiting
+- **Private**: All processing happens in your browser
+- **Accessible**: Keyboard navigation, screen reader support
+- **Mobile-Friendly**: Works on all devices
 
-## Accessibility
+### Technical Constraints
 
-- ✅ ARIA labels and roles
-- ✅ Keyboard navigation support
-- ✅ Focus indicators
-- ✅ Screen reader friendly
-- ✅ Semantic HTML structure
+- ✅ Frontend only (HTML + CSS + JS)
+- ✅ No backend, no database
+- ✅ No authentication
+- ✅ CDN libraries only
+- ✅ Each tool works offline after load
+- ✅ No user data stored
 
 ---
 
-## Browser Support
+## 📁 Project Structure
+
+```
+garry-micro-dev-utilities/
+├── index.html              # Single HTML file with dashboard + all 8 tools
+├── samples/                 # Sample data files
+│   └── pizza-store.yaml     # Sample OpenAPI spec for testing
+├── scripts/                 # Utility scripts
+│   └── validate-openapi.js  # OpenAPI validation script
+├── .github/workflows/       # CI/CD pipelines
+│   ├── ci.yml              # Continuous Integration
+│   └── deploy.yml          # GitHub Pages deployment
+├── README.md               # This file
+├── ARCHITECTURE.md         # Architecture documentation
+├── DEPLOYMENT.md           # GitHub Pages deployment guide
+├── TOOLS.md                # Detailed tool specifications
+├── CONTRIBUTING.md         # Contribution guidelines
+├── CHANGELOG.md            # Version history
+├── LICENSE                 # MIT License
+└── package.json            # Project metadata
+```
+
+**Single File Architecture**: All 8 tools are embedded in `index.html`. Click a tool card in the dashboard to load the tool section dynamically.
+
+### Architecture Diagram
+
+```mermaid
+graph TB
+    A[index.html<br/>Single File] --> B[Dashboard Section]
+    A --> C[Tool Sections<br/>Hidden by Default]
+    
+    B --> D[Tool Cards Grid]
+    D --> E[API & Backend Tools]
+    D --> F[Data & Formats Tools]
+    D --> G[Debugging & Security Tools]
+    
+    E --> E1[OpenAPI Viewer]
+    E --> E2[JWT Inspector]
+    E --> E3[API Response Diff]
+    E --> E4[Curl Visualizer]
+    E --> E5[API Risk Analyzer]
+    
+    F --> F1[JSON/YAML Formatter]
+    F --> F2[CSV Explorer]
+    
+    G --> G1[SQL Explainer]
+    
+    H[User Clicks Card] --> I[JavaScript Navigation]
+    I --> J[Show Tool Section]
+    I --> K[Hide Dashboard]
+    
+    J --> L[Tool Interface Loads]
+    L --> M[User Interacts]
+    M --> N[Browser Processing]
+    N --> O[Results Displayed]
+    
+    P[GitHub Pages] --> Q[Auto Deploy on Push]
+    Q --> R[Live Site]
+    
+    style A fill:#0A66C2,color:#fff
+    style B fill:#F3F6F8
+    style C fill:#F3F6F8
+    style P fill:#28a745,color:#fff
+    style R fill:#28a745,color:#fff
+```
+
+### Tool Flow Diagram
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Dashboard
+    participant JavaScript
+    participant Tool
+    participant Browser
+    
+    User->>Dashboard: Opens index.html
+    Dashboard->>User: Shows tool cards
+    
+    User->>Dashboard: Clicks tool card
+    Dashboard->>JavaScript: showTool(toolId)
+    JavaScript->>Dashboard: Hide dashboard section
+    JavaScript->>Tool: Show tool section
+    
+    User->>Tool: Uploads file / Pastes data
+    Tool->>Browser: Process in browser
+    Browser->>Tool: Return results
+    Tool->>User: Display results
+    
+    User->>Tool: Clicks "Back to Dashboard"
+    Tool->>JavaScript: showDashboard()
+    JavaScript->>Tool: Hide tool section
+    JavaScript->>Dashboard: Show dashboard
+    Dashboard->>User: Display tool cards
+```
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) for detailed architecture.
+
+---
+
+## 🔒 Security & Privacy
+
+```mermaid
+graph TB
+    A[User Input] --> B[Browser Processing]
+    B --> C{Validation}
+    C -->|Valid| D[Process Locally]
+    C -->|Invalid| E[Show Error]
+    
+    D --> F[Display Results]
+    F --> G[User Views Results]
+    
+    H[File Upload] --> I{Size Check}
+    I -->|>10MB| J[Reject]
+    I -->|<10MB| B
+    
+    K[CDN Resources] --> L[Pinned Versions]
+    L --> M[Integrity Checks]
+    M --> B
+    
+    N[No Backend] --> O[No Data Transmission]
+    O --> P[Privacy Guaranteed]
+    
+    style B fill:#0A66C2,color:#fff
+    style O fill:#28a745,color:#fff
+    style P fill:#28a745,color:#fff
+    style J fill:#dc2626,color:#fff
+```
+
+**Security Features:**
+- ✅ **Content Security Policy** headers on all pages
+- ✅ **No external requests** - Tools don't send data anywhere
+- ✅ **File size limits** - 10MB default limit per tool
+- ✅ **Input validation** - Client-side validation only
+- ✅ **Error boundaries** - Graceful error handling
+- ✅ **Pinned CDN versions** - All dependencies use specific versions
+
+**All tools run entirely in your browser. No data is sent to any server.**
+
+---
+
+## 🌐 Browser Support
 
 - ✅ Chrome/Edge (latest)
 - ✅ Firefox (latest)
@@ -246,16 +282,91 @@ Requires modern browser with ES6+ support.
 
 ---
 
-## Contributing
+## 🛠️ Technology Stack
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+```mermaid
+graph LR
+    A[index.html] --> B[Tailwind CSS<br/>3.4.1]
+    A --> C[Font Awesome<br/>6.5.1]
+    A --> D[Swagger UI<br/>5.17.14]
+    A --> E[js-yaml<br/>4.1.0]
+    A --> F[Vanilla JS<br/>ES6+]
+    
+    B --> G[Styling]
+    C --> H[Icons]
+    D --> I[OpenAPI Rendering]
+    E --> J[YAML Parsing]
+    F --> K[Tool Logic]
+    
+    G --> L[Browser]
+    H --> L
+    I --> L
+    J --> L
+    K --> L
+    
+    L --> M[User Interface]
+    
+    style A fill:#0A66C2,color:#fff
+    style L fill:#28a745,color:#fff
+    style M fill:#F3F6F8
+```
+
+**Dependencies:**
+- **Styling**: Tailwind CSS 3.4.1 (CDN)
+- **Icons**: Font Awesome 6.5.1 (CDN)
+- **OpenAPI Rendering**: Swagger UI 5.17.14 (CDN)
+- **YAML Parsing**: js-yaml 4.1.0 (CDN)
+- **JavaScript**: Vanilla ES6+ (no frameworks)
+- **Architecture**: Single HTML file with embedded tools
 
 ---
 
-## License
+## 📝 Contributing
+
+We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+### Adding a New Tool
+
+Since all tools are in a single `index.html` file:
+
+1. Add a tool card to the dashboard section in `index.html`
+2. Add a tool section with the tool's HTML/JS implementation
+3. Update the navigation JavaScript to handle the new tool
+4. Update this README with the new tool
+5. Test in multiple browsers
+6. Submit a pull request
+
+See [TOOLS.md](TOOLS.md) for detailed tool specifications and patterns.
+
+---
+
+## 📄 License
 
 MIT License - see [LICENSE](LICENSE) file for details.
+
+---
+
+## 🙏 Acknowledgments
+
+- Inspired by [ilovepdf.com](https://www.ilovepdf.com)
+- Built with [Tailwind CSS](https://tailwindcss.com)
+- Icons by [Font Awesome](https://fontawesome.com)
+- OpenAPI rendering by [Swagger UI](https://swagger.io/tools/swagger-ui/)
+- YAML parsing by [js-yaml](https://github.com/nodeca/js-yaml)
+
+---
+
+## 🔗 Links
+
+- **Live Site**: https://girijashankarj.github.io/garry-micro-dev-utilities/
+- **Repository**: https://github.com/girijashankarj/garry-micro-dev-utilities
+- **Issues**: https://github.com/girijashankarj/garry-micro-dev-utilities/issues
+- **Deployment Guide**: [DEPLOYMENT.md](DEPLOYMENT.md)
+- **Architecture**: [ARCHITECTURE.md](ARCHITECTURE.md)
+- **Tool Specifications**: [TOOLS.md](TOOLS.md)
+
+---
+
+<p align="center">
+  Made with ❤️ for developers who value simplicity and privacy
+</p>

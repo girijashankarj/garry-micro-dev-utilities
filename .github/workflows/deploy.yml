@@ -44,4 +44,4 @@ jobs:
         run: |
           echo "🚀 Deployment successful!"
           echo "📄 Site URL: ${{ steps.deployment.outputs.page_url }}"
-          echo "📝 Access your viewer at: ${{ steps.deployment.outputs.page_url }}/openapi-viewer.html"
+          echo "🛠️ Access Garry Micro Dev Utilities at: ${{ steps.deployment.outputs.page_url }}"

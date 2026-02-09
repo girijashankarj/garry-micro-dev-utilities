@@ -37,7 +37,7 @@ jobs:
       - name: Check HTML syntax
         run: |
           if command -v tidy &> /dev/null; then
-            tidy -e -q openapi-viewer.html || echo "HTML tidy not available, skipping"
+            tidy -e -q index.html || echo "HTML tidy not available, skipping"
           else
             echo "HTML tidy not installed, skipping HTML validation"
           fi
@@ -45,7 +45,7 @@ jobs:
       - name: Check file sizes
         run: |
           echo "Checking file sizes..."
-          find . -type f -name "*.html" -o -name "*.yaml" -o -name "*.json" | while read file; do
+          find . -type f \( -name "*.html" -o -name "*.yaml" -o -name "*.json" \) -not -path "./.git/*" | while read file; do
             size=$(stat -f%z "$file" 2>/dev/null || stat -c%s "$file" 2>/dev/null || echo "0")
             if [ "$size" -gt 10485760 ]; then
               echo "Warning: $file is larger than 10MB ($size bytes)"
@@ -69,7 +69,7 @@ jobs:
       - name: Check CDN integrity
         run: |
           echo "Checking CDN links in HTML..."
-          if grep -q "integrity=" openapi-viewer.html; then
+          if grep -q "integrity=" index.html; then
             echo "✓ Integrity attributes found"
           else
             echo "⚠ Some CDN links may be missing integrity attributes"

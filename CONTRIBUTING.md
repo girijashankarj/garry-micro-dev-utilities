@@ -5,7 +5,7 @@ Thank you for your interest in contributing! This document provides guidelines a
 ## Getting Started
 
 1. Fork the repository
-2. Clone your fork: `git clone https://github.com/yourusername/garry-openapi-swagger-viewer.git`
+2. Clone your fork: `git clone https://github.com/yourusername/garry-micro-dev-utilities.git`
 3. Create a branch: `git checkout -b feature/your-feature-name`
 
 ## Development Setup
@@ -17,7 +17,7 @@ No build step is required! Simply:
 python3 -m http.server 8080
 
 # Open in browser
-open http://localhost:8080/openapi-viewer.html
+open http://localhost:8080
 ```
 
 ## Code Style

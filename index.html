@@ -1,0 +1,1687 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="description" content="A collection of small, fast, browser-only developer tools that solve everyday engineering problems."/>
+  <meta name="keywords" content="developer tools, utilities, API tools, JSON, YAML, JWT, curl, CSV, SQL, OpenAPI"/>
+  <meta name="author" content="Garry Micro Dev Utilities"/>
+  
+  <!-- Security Headers -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://unpkg.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://unpkg.com https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com; img-src 'self' data: https:; connect-src 'self' https:;"/>
+  <meta http-equiv="X-Content-Type-Options" content="nosniff"/>
+  <meta http-equiv="X-Frame-Options" content="SAMEORIGIN"/>
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block"/>
+  
+  <title>Garry Micro Dev Utilities - Developer Tools Platform</title>
+
+  <!-- Tailwind CSS (CDN) -->
+  <script src="https://cdn.tailwindcss.com/3.4.1"></script>
+
+  <!-- Font Awesome Icons (CDN) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
+  <!-- Swagger UI (CDN) - Loaded when needed -->
+  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.17.14/swagger-ui.css" />
+
+  <!-- YAML parser (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js" integrity="sha512-pu1YVJjN3zW3f0X7f0T3vN3N3JSY3W9fQ5Tt3f8J6Zmgx1B1v8Y5YFv5z5F5F5F5F5F5F5F5F5F5F5F5F5F5F5F5F==" crossorigin="anonymous"></script>
+
+  <style>
+    :root{
+      --primary-blue:#0A66C2;
+      --primary-blue-hover:#0b5cad;
+      --bg-light:#F3F6F8;
+      --card-white:#FFFFFF;
+      --text-dark:#1f2937;
+      --text-muted:#6b7280;
+      --border-light:#e5e7eb;
+    }
+    body{ background:var(--bg-light); color:var(--text-dark); }
+    .tool-section{ display:none; }
+    .tool-section.active{ display:block; }
+    .tool-card{ cursor:pointer; transition:all 0.2s; }
+    .tool-card:hover{ transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,0.1); }
+    .tool-card.active{ border-color:var(--primary-blue); border-width:2px; }
+    /* Swagger tweaks */
+    .swagger-ui .topbar{ display:none; }
+    .swagger-ui .info .title{ color:var(--text-dark); font-weight:800; }
+    .swagger-ui .info a{ color:var(--primary-blue); }
+    .swagger-ui .btn.authorize{ background:var(--primary-blue); border-color:var(--primary-blue); }
+    .swagger-ui .btn.authorize:hover{ background:var(--primary-blue-hover); border-color:var(--primary-blue-hover); }
+    .swagger-ui .opblock.opblock-get .opblock-summary-method{ background:#2563eb; }
+    .swagger-ui .opblock.opblock-post .opblock-summary-method{ background:#16a34a; }
+    .swagger-ui .opblock.opblock-put .opblock-summary-method{ background:#f59e0b; }
+    .swagger-ui .opblock.opblock-delete .opblock-summary-method{ background:#dc2626; }
+    .swagger-ui .opblock{ border:1px solid var(--border-light); border-radius:12px; box-shadow:0 1px 2px rgba(0,0,0,.04); }
+    .swagger-ui .opblock .opblock-summary{ border-bottom:1px solid var(--border-light); }
+    .swagger-ui .scheme-container{ background:transparent; box-shadow:none; padding:0; }
+    .swagger-ui .wrapper{ max-width:1200px; }
+    .swagger-ui .opblock-tag{ border-bottom:1px solid var(--border-light); }
+    .swagger-ui .opblock-tag:hover{ background:rgba(10,102,194,0.05); }
+    .swagger-ui .responses-inner{ border-top:1px solid var(--border-light); }
+    .swagger-ui select{ border-radius:10px !important; }
+    .swagger-ui input[type="text"], .swagger-ui input[type="password"], .swagger-ui textarea{
+      border-radius:10px !important; border:1px solid var(--border-light) !important;
+    }
+    .swagger-ui .btn{ border-radius:10px !important; }
+    #swagger-root{ background:var(--card-white); border:1px solid var(--border-light); border-radius:16px; }
+  </style>
+</head>
+
+<body class="min-h-screen">
+  <!-- Header -->
+  <header class="sticky top-0 z-20 backdrop-blur bg-white/80 border-b border-slate-200 shadow-sm">
+    <div class="max-w-[1400px] mx-auto px-4 py-4 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="h-12 w-12 rounded-xl flex items-center justify-center text-white" style="background:var(--primary-blue);">
+          <i class="fa-solid fa-toolbox text-xl"></i>
+        </div>
+        <div>
+          <div class="text-xl font-extrabold leading-tight">Garry Micro Dev Utilities</div>
+          <div class="text-xs text-slate-500">Browser-only developer tools · Zero backend · Zero login</div>
+        </div>
+      </div>
+      <div class="text-sm text-slate-600 hidden md:block">
+        <i class="fa-solid fa-shield-halved mr-1"></i>Runs fully in your browser
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-[1400px] mx-auto px-4 py-8">
+    <!-- Hero Section -->
+    <section class="text-center mb-12" id="hero-section">
+      <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Developer Tools That Just Work</h1>
+      <p class="text-lg text-slate-600 max-w-2xl mx-auto mb-6">
+        A curated collection of small, sharp utilities for everyday engineering problems.
+        <strong>No backend. No login. No complexity.</strong>
+      </p>
+      <div class="flex flex-wrap justify-center gap-3 text-sm">
+        <span class="px-3 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+          <i class="fa-solid fa-bolt mr-1"></i>Fast
+        </span>
+        <span class="px-3 py-1 rounded-full bg-green-50 text-green-700 border border-green-200">
+          <i class="fa-solid fa-lock mr-1"></i>Private
+        </span>
+        <span class="px-3 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-200">
+          <i class="fa-solid fa-plug mr-1"></i>Offline-ready
+        </span>
+      </div>
+    </section>
+
+    <!-- Tools Grid -->
+    <section id="tools-grid">
+      <h2 class="text-2xl font-bold mb-6">Available Tools</h2>
+      
+      <!-- API & Backend -->
+      <div class="mb-8">
+        <h3 class="text-lg font-semibold text-slate-700 mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-server text-blue-600"></i>
+          API & Backend
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- OpenAPI Swagger Viewer -->
+          <div class="tool-card bg-white border-2 border-slate-200 rounded-xl p-5 shadow-sm" data-tool="openapi-viewer">
+            <div class="flex items-start justify-between mb-3">
+              <div class="h-10 w-10 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600">
+                <i class="fa-solid fa-file-code"></i>
+              </div>
+              <span class="text-xs px-2 py-1 rounded bg-green-50 text-green-700 border border-green-200">Available</span>
+            </div>
+            <h4 class="font-bold text-lg mb-2">OpenAPI Swagger Viewer</h4>
+            <p class="text-sm text-slate-600 mb-4">Upload OpenAPI YAML/JSON and render interactive API documentation instantly.</p>
+            <div class="text-sm font-semibold text-blue-600">Click to open →</div>
+          </div>
+
+          <!-- JWT Inspector -->
+          <div class="tool-card bg-white border-2 border-slate-200 rounded-xl p-5 shadow-sm" data-tool="jwt-inspector">
+            <div class="flex items-start justify-between mb-3">
+              <div class="h-10 w-10 rounded-lg bg-purple-100 flex items-center justify-center text-purple-600">
+                <i class="fa-solid fa-key"></i>
+              </div>
+              <span class="text-xs px-2 py-1 rounded bg-green-50 text-green-700 border border-green-200">Available</span>
+            </div>
+            <h4 class="font-bold text-lg mb-2">JWT Inspector</h4>
+            <p class="text-sm text-slate-600 mb-4">Decode and inspect JWT tokens offline. View header, payload, and expiration details.</p>
+            <div class="text-sm font-semibold text-blue-600">Click to open →</div>
+          </div>
+
+          <!-- API Response Diff -->
+          <div class="tool-card bg-white border-2 border-slate-200 rounded-xl p-5 shadow-sm" data-tool="api-response-diff">
+            <div class="flex items-start justify-between mb-3">
+              <div class="h-10 w-10 rounded-lg bg-orange-100 flex items-center justify-center text-orange-600">
+                <i class="fa-solid fa-code-compare"></i>
+              </div>
+              <span class="text-xs px-2 py-1 rounded bg-green-50 text-green-700 border border-green-200">Available</span>
+            </div>
+            <h4 class="font-bold text-lg mb-2">API Response Diff</h4>
+            <p class="text-sm text-slate-600 mb-4">Compare two JSON API responses and highlight semantic differences and breaking changes.</p>
+            <div class="text-sm font-semibold text-blue-600">Click to open →</div>
+          </div>
+
+          <!-- Curl Command Visualizer -->
+          <div class="tool-card bg-white border-2 border-slate-200 rounded-xl p-5 shadow-sm" data-tool="curl-visualizer">
+            <div class="flex items-start justify-between mb-3">
+              <div class="h-10 w-10 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600">
+                <i class="fa-solid fa-terminal"></i>
+              </div>
+              <span class="text-xs px-2 py-1 rounded bg-green-50 text-green-700 border border-green-200">Available</span>
+            </div>
+            <h4 class="font-bold text-lg mb-2">Curl Command Visualizer</h4>
+            <p class="text-sm text-slate-600 mb-4">Paste a curl command and visualize headers, params, body. Convert to Fetch/Axios.</p>
+            <div class="text-sm font-semibold text-blue-600">Click to open →</div>
+          </div>
+
+          <!-- API Contract Risk Analyzer -->
+          <div class="tool-card bg-white border-2 border-slate-200 rounded-xl p-5 shadow-sm" data-tool="api-risk-analyzer">
+            <div class="flex items-start justify-between mb-3">
+              <div class="h-10 w-10 rounded-lg bg-red-100 flex items-center justify-center text-red-600">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+              </div>
+              <span class="text-xs px-2 py-1 rounded bg-green-50 text-green-700 border border-green-200">Available</span>
+            </div>
+            <h4 class="font-bold text-lg mb-2">API Contract Risk Analyzer</h4>
+            <p class="text-sm text-slate-600 mb-4">Upload OpenAPI spec and flag missing errors, weak validation, and breaking change risks.</p>
+            <div class="text-sm font-semibold text-blue-600">Click to open →</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Data & Formats -->
+      <div class="mb-8">
+        <h3 class="text-lg font-semibold text-slate-700 mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-database text-green-600"></i>
+          Data & Formats
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- JSON/YAML Formatter -->
+          <div class="tool-card bg-white border-2 border-slate-200 rounded-xl p-5 shadow-sm" data-tool="json-formatter">
+            <div class="flex items-start justify-between mb-3">
+              <div class="h-10 w-10 rounded-lg bg-green-100 flex items-center justify-center text-green-600">
+                <i class="fa-solid fa-brackets-curly"></i>
+              </div>
+              <span class="text-xs px-2 py-1 rounded bg-green-50 text-green-700 border border-green-200">Available</span>
+            </div>
+            <h4 class="font-bold text-lg mb-2">JSON / YAML Formatter</h4>
+            <p class="text-sm text-slate-600 mb-4">Format and validate JSON/YAML. Auto-format, show syntax errors, copy output.</p>
+            <div class="text-sm font-semibold text-blue-600">Click to open →</div>
+          </div>
+
+          <!-- CSV Explorer -->
+          <div class="tool-card bg-white border-2 border-slate-200 rounded-xl p-5 shadow-sm" data-tool="csv-explorer">
+            <div class="flex items-start justify-between mb-3">
+              <div class="h-10 w-10 rounded-lg bg-teal-100 flex items-center justify-center text-teal-600">
+                <i class="fa-solid fa-table"></i>
+              </div>
+              <span class="text-xs px-2 py-1 rounded bg-green-50 text-green-700 border border-green-200">Available</span>
+            </div>
+            <h4 class="font-bold text-lg mb-2">CSV Explorer</h4>
+            <p class="text-sm text-slate-600 mb-4">Upload CSV files, render as table, apply filters, and export to JSON.</p>
+            <div class="text-sm font-semibold text-blue-600">Click to open →</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Debugging & Security -->
+      <div class="mb-8">
+        <h3 class="text-lg font-semibold text-slate-700 mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-bug text-red-600"></i>
+          Debugging & Security
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- SQL Query Explainer -->
+          <div class="tool-card bg-white border-2 border-slate-200 rounded-xl p-5 shadow-sm" data-tool="sql-explainer">
+            <div class="flex items-start justify-between mb-3">
+              <div class="h-10 w-10 rounded-lg bg-cyan-100 flex items-center justify-center text-cyan-600">
+                <i class="fa-solid fa-database"></i>
+              </div>
+              <span class="text-xs px-2 py-1 rounded bg-green-50 text-green-700 border border-green-200">Available</span>
+            </div>
+            <h4 class="font-bold text-lg mb-2">SQL Query Explainer</h4>
+            <p class="text-sm text-slate-600 mb-4">Paste SQL queries and get explanations of joins, filters, and potential risks. No DB execution.</p>
+            <div class="text-sm font-semibold text-blue-600">Click to open →</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tool Sections (Hidden by default) -->
+    <section id="tool-sections" class="mt-12">
+      
+      <!-- OpenAPI Swagger Viewer Tool -->
+      <div id="tool-openapi-viewer" class="tool-section">
+        <div class="mb-6 flex items-center justify-between">
+          <h2 class="text-2xl font-bold flex items-center gap-3">
+            <i class="fa-solid fa-file-code text-blue-600"></i>
+            OpenAPI Swagger Viewer
+          </h2>
+          <button onclick="showDashboard()" class="px-4 py-2 rounded-lg text-sm font-semibold border border-slate-200 bg-white hover:bg-slate-50">
+            <i class="fa-solid fa-arrow-left mr-2"></i>Back to Dashboard
+          </button>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 md:p-5 shadow-sm">
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div class="flex items-start gap-3">
+              <div class="mt-1 h-9 w-9 rounded-xl flex items-center justify-center bg-slate-100 text-slate-700">
+                <i class="fa-solid fa-upload"></i>
+              </div>
+              <div>
+                <div class="font-bold">Upload OpenAPI file</div>
+                <div class="text-sm text-slate-500">
+                  Supports <span class="font-semibold">.yaml / .yml / .json</span>. No server needed — runs fully in browser.
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-2 sm:items-center">
+              <label class="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2">
+                <i class="fa-regular fa-file-lines text-slate-600" aria-hidden="true"></i>
+                <span class="text-sm font-semibold">Choose file</span>
+                <input id="openapi-fileInput" type="file" class="hidden" accept=".yaml,.yml,.json,application/yaml,application/json,text/yaml,text/plain" aria-label="Select OpenAPI specification file"/>
+              </label>
+
+              <button id="openapi-btnSample" class="px-3 py-2 rounded-xl text-sm font-semibold border border-slate-200 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                <i class="fa-solid fa-pizza-slice mr-2 text-slate-600"></i>Load Sample
+              </button>
+
+              <button id="openapi-btnClear" class="px-3 py-2 rounded-xl text-sm font-semibold border border-slate-200 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                <i class="fa-solid fa-broom mr-2 text-slate-600"></i>Clear
+              </button>
+            </div>
+          </div>
+
+          <div class="mt-3">
+            <div id="openapi-status" class="text-sm text-slate-600" role="status" aria-live="polite"></div>
+            <div id="openapi-errorBox" class="hidden mt-3 p-3 rounded-xl border border-red-200 bg-red-50 text-red-800 text-sm" role="alert" aria-live="assertive"></div>
+            <div id="openapi-loadingIndicator" class="hidden mt-3">
+              <div class="flex items-center gap-2 text-sm text-slate-600">
+                <i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i>
+                <span>Processing...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Swagger Container -->
+        <div class="mt-6" id="swagger-root">
+          <div class="p-4 border-b border-slate-200 flex items-center justify-between bg-white rounded-t-xl border border-slate-200">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-book text-slate-600" aria-hidden="true"></i>
+              <div class="font-bold">API Documentation</div>
+            </div>
+            <div class="text-xs text-slate-500">Tip: Use "Load Sample" to see it instantly</div>
+          </div>
+          <div id="swagger-ui" class="p-0 bg-white rounded-b-xl border-x border-b border-slate-200"></div>
+        </div>
+      </div>
+
+      <!-- JWT Inspector Tool -->
+      <div id="tool-jwt-inspector" class="tool-section">
+        <div class="mb-6 flex items-center justify-between">
+          <h2 class="text-2xl font-bold flex items-center gap-3">
+            <i class="fa-solid fa-key text-purple-600"></i>
+            JWT Inspector
+          </h2>
+          <button onclick="showDashboard()" class="px-4 py-2 rounded-lg text-sm font-semibold border border-slate-200 bg-white hover:bg-slate-50">
+            <i class="fa-solid fa-arrow-left mr-2"></i>Back to Dashboard
+          </button>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+          <div class="mb-4">
+            <label class="block text-sm font-semibold mb-2">Paste JWT Token</label>
+            <textarea id="jwt-input" rows="3" class="w-full p-3 border border-slate-300 rounded-lg font-mono text-sm" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."></textarea>
+            <button id="jwt-decode" class="mt-3 px-4 py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--primary-blue);">
+              <i class="fa-solid fa-unlock mr-2"></i>Decode JWT
+            </button>
+            <button id="jwt-clear" class="mt-3 ml-2 px-4 py-2 rounded-lg text-sm font-semibold border border-slate-200 bg-white hover:bg-slate-50">
+              <i class="fa-solid fa-broom mr-2"></i>Clear
+            </button>
+          </div>
+          <div id="jwt-error" class="hidden mt-3 p-3 rounded-lg border border-red-200 bg-red-50 text-red-800 text-sm"></div>
+        </div>
+
+        <div id="jwt-results" class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-white border border-slate-200 rounded-xl p-5">
+            <h3 class="font-bold mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-heading text-blue-600"></i>Header
+            </h3>
+            <pre id="jwt-header" class="bg-slate-50 p-3 rounded text-xs overflow-auto max-h-48"></pre>
+          </div>
+          <div class="bg-white border border-slate-200 rounded-xl p-5">
+            <h3 class="font-bold mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-box text-green-600"></i>Payload
+            </h3>
+            <pre id="jwt-payload" class="bg-slate-50 p-3 rounded text-xs overflow-auto max-h-48"></pre>
+          </div>
+        </div>
+
+        <div id="jwt-warnings" class="mt-6"></div>
+      </div>
+
+      <!-- API Response Diff Tool -->
+      <div id="tool-api-response-diff" class="tool-section">
+        <div class="mb-6 flex items-center justify-between">
+          <h2 class="text-2xl font-bold flex items-center gap-3">
+            <i class="fa-solid fa-code-compare text-orange-600"></i>
+            API Response Diff
+          </h2>
+          <button onclick="showDashboard()" class="px-4 py-2 rounded-lg text-sm font-semibold border border-slate-200 bg-white hover:bg-slate-50">
+            <i class="fa-solid fa-arrow-left mr-2"></i>Back to Dashboard
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div class="bg-white border border-slate-200 rounded-xl p-5">
+            <label class="block text-sm font-semibold mb-2">Response 1 (Old)</label>
+            <textarea id="diff-response1" rows="10" class="w-full p-3 border border-slate-300 rounded-lg font-mono text-xs" placeholder='{"status": "success", "data": {...}}'></textarea>
+          </div>
+          <div class="bg-white border border-slate-200 rounded-xl p-5">
+            <label class="block text-sm font-semibold mb-2">Response 2 (New)</label>
+            <textarea id="diff-response2" rows="10" class="w-full p-3 border border-slate-300 rounded-lg font-mono text-xs" placeholder='{"status": "success", "data": {...}}'></textarea>
+          </div>
+        </div>
+
+        <div class="flex gap-2 mb-6">
+          <button id="diff-compare" class="px-4 py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--primary-blue);">
+            <i class="fa-solid fa-code-compare mr-2"></i>Compare Responses
+          </button>
+          <button id="diff-clear" class="px-4 py-2 rounded-lg text-sm font-semibold border border-slate-200 bg-white hover:bg-slate-50">
+            <i class="fa-solid fa-broom mr-2"></i>Clear
+          </button>
+        </div>
+
+        <div id="diff-error" class="hidden mb-4 p-3 rounded-lg border border-red-200 bg-red-50 text-red-800 text-sm"></div>
+        <div id="diff-results" class="bg-white border border-slate-200 rounded-xl p-5"></div>
+      </div>
+
+      <!-- Curl Command Visualizer Tool -->
+      <div id="tool-curl-visualizer" class="tool-section">
+        <div class="mb-6 flex items-center justify-between">
+          <h2 class="text-2xl font-bold flex items-center gap-3">
+            <i class="fa-solid fa-terminal text-indigo-600"></i>
+            Curl Command Visualizer
+          </h2>
+          <button onclick="showDashboard()" class="px-4 py-2 rounded-lg text-sm font-semibold border border-slate-200 bg-white hover:bg-slate-50">
+            <i class="fa-solid fa-arrow-left mr-2"></i>Back to Dashboard
+          </button>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm mb-6">
+          <label class="block text-sm font-semibold mb-2">Paste curl command</label>
+          <textarea id="curl-input" rows="5" class="w-full p-3 border border-slate-300 rounded-lg font-mono text-sm" placeholder='curl -X POST https://api.example.com/users -H "Content-Type: application/json" -d "{\"name\":\"John\"}"'></textarea>
+          <div class="flex gap-2 mt-3">
+            <button id="curl-parse" class="px-4 py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--primary-blue);">
+              <i class="fa-solid fa-eye mr-2"></i>Visualize
+            </button>
+            <button id="curl-clear" class="px-4 py-2 rounded-lg text-sm font-semibold border border-slate-200 bg-white hover:bg-slate-50">
+              <i class="fa-solid fa-broom mr-2"></i>Clear
+            </button>
+          </div>
+          <div id="curl-error" class="hidden mt-3 p-3 rounded-lg border border-red-200 bg-red-50 text-red-800 text-sm"></div>
+        </div>
+
+        <div id="curl-visualization" class="space-y-4">
+          <div class="bg-white border border-slate-200 rounded-xl p-5">
+            <h3 class="font-bold mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-globe text-blue-600"></i>Request Details
+            </h3>
+            <div id="curl-details" class="space-y-2"></div>
+          </div>
+
+          <div class="bg-white border border-slate-200 rounded-xl p-5">
+            <h3 class="font-bold mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-green-600"></i>Converted Code
+            </h3>
+            <div class="flex gap-2 mb-3">
+              <button id="curl-show-fetch" class="px-3 py-1 rounded text-xs font-semibold border border-slate-200 bg-white hover:bg-slate-50">Fetch API</button>
+              <button id="curl-show-axios" class="px-3 py-1 rounded text-xs font-semibold border border-slate-200 bg-white hover:bg-slate-50">Axios</button>
+            </div>
+            <pre id="curl-code-output" class="bg-slate-50 p-4 rounded text-xs overflow-auto"></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- API Contract Risk Analyzer Tool -->
+      <div id="tool-api-risk-analyzer" class="tool-section">
+        <div class="mb-6 flex items-center justify-between">
+          <h2 class="text-2xl font-bold flex items-center gap-3">
+            <i class="fa-solid fa-triangle-exclamation text-red-600"></i>
+            API Contract Risk Analyzer
+          </h2>
+          <button onclick="showDashboard()" class="px-4 py-2 rounded-lg text-sm font-semibold border border-slate-200 bg-white hover:bg-slate-50">
+            <i class="fa-solid fa-arrow-left mr-2"></i>Back to Dashboard
+          </button>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm mb-6">
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div class="flex items-start gap-3">
+              <div class="mt-1 h-9 w-9 rounded-xl flex items-center justify-center bg-slate-100 text-slate-700">
+                <i class="fa-solid fa-upload"></i>
+              </div>
+              <div>
+                <div class="font-bold">Upload OpenAPI spec</div>
+                <div class="text-sm text-slate-500">Analyze for risks, missing errors, and breaking changes</div>
+              </div>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-2">
+              <label class="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer">
+                <i class="fa-regular fa-file-lines text-slate-600"></i>
+                <span class="text-sm font-semibold">Choose file</span>
+                <input id="risk-fileInput" type="file" class="hidden" accept=".yaml,.yml,.json"/>
+              </label>
+              <button id="risk-analyze" class="px-4 py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--primary-blue);">
+                <i class="fa-solid fa-search mr-2"></i>Analyze
+              </button>
+              <button id="risk-clear" class="px-4 py-2 rounded-lg text-sm font-semibold border border-slate-200 bg-white hover:bg-slate-50">
+                <i class="fa-solid fa-broom mr-2"></i>Clear
+              </button>
+            </div>
+          </div>
+          <div id="risk-error" class="hidden mt-3 p-3 rounded-lg border border-red-200 bg-red-50 text-red-800 text-sm"></div>
+        </div>
+
+        <div id="risk-results" class="space-y-4"></div>
+      </div>
+
+      <!-- JSON / YAML Formatter Tool -->
+      <div id="tool-json-formatter" class="tool-section">
+        <div class="mb-6 flex items-center justify-between">
+          <h2 class="text-2xl font-bold flex items-center gap-3">
+            <i class="fa-solid fa-brackets-curly text-green-600"></i>
+            JSON / YAML Formatter
+          </h2>
+          <button onclick="showDashboard()" class="px-4 py-2 rounded-lg text-sm font-semibold border border-slate-200 bg-white hover:bg-slate-50">
+            <i class="fa-solid fa-arrow-left mr-2"></i>Back to Dashboard
+          </button>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm mb-6">
+          <div class="flex gap-2 mb-3">
+            <label class="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer">
+              <i class="fa-regular fa-file-lines text-slate-600"></i>
+              <span class="text-sm font-semibold">Upload file</span>
+              <input id="formatter-fileInput" type="file" class="hidden" accept=".json,.yaml,.yml"/>
+            </label>
+            <select id="formatter-format" class="px-3 py-2 rounded-lg border border-slate-200 text-sm">
+              <option value="json">JSON</option>
+              <option value="yaml">YAML</option>
+            </select>
+            <button id="formatter-format-btn" class="px-4 py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--primary-blue);">
+              <i class="fa-solid fa-magic mr-2"></i>Format
+            </button>
+            <button id="formatter-minify" class="px-4 py-2 rounded-lg text-sm font-semibold border border-slate-200 bg-white hover:bg-slate-50">
+              <i class="fa-solid fa-compress mr-2"></i>Minify
+            </button>
+            <button id="formatter-copy" class="px-4 py-2 rounded-lg text-sm font-semibold border border-slate-200 bg-white hover:bg-slate-50">
+              <i class="fa-solid fa-copy mr-2"></i>Copy
+            </button>
+            <button id="formatter-clear" class="px-4 py-2 rounded-lg text-sm font-semibold border border-slate-200 bg-white hover:bg-slate-50">
+              <i class="fa-solid fa-broom mr-2"></i>Clear
+            </button>
+          </div>
+          <textarea id="formatter-input" rows="12" class="w-full p-3 border border-slate-300 rounded-lg font-mono text-xs" placeholder='{"name":"John","age":30} or name: John\nage: 30'></textarea>
+          <div id="formatter-error" class="hidden mt-3 p-3 rounded-lg border border-red-200 bg-red-50 text-red-800 text-sm"></div>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="font-bold">Formatted Output</h3>
+            <span id="formatter-status" class="text-xs text-slate-500"></span>
+          </div>
+          <pre id="formatter-output" class="bg-slate-50 p-4 rounded text-xs overflow-auto max-h-96"></pre>
+        </div>
+      </div>
+
+      <!-- CSV Explorer Tool -->
+      <div id="tool-csv-explorer" class="tool-section">
+        <div class="mb-6 flex items-center justify-between">
+          <h2 class="text-2xl font-bold flex items-center gap-3">
+            <i class="fa-solid fa-table text-teal-600"></i>
+            CSV Explorer
+          </h2>
+          <button onclick="showDashboard()" class="px-4 py-2 rounded-lg text-sm font-semibold border border-slate-200 bg-white hover:bg-slate-50">
+            <i class="fa-solid fa-arrow-left mr-2"></i>Back to Dashboard
+          </button>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm mb-6">
+          <div class="flex gap-2 mb-3">
+            <label class="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer">
+              <i class="fa-regular fa-file-lines text-slate-600"></i>
+              <span class="text-sm font-semibold">Upload CSV</span>
+              <input id="csv-fileInput" type="file" class="hidden" accept=".csv,text/csv"/>
+            </label>
+            <input id="csv-search" type="text" placeholder="Search..." class="px-3 py-2 rounded-lg border border-slate-200 text-sm flex-1"/>
+            <button id="csv-export-json" class="px-4 py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--primary-blue);">
+              <i class="fa-solid fa-download mr-2"></i>Export JSON
+            </button>
+            <button id="csv-clear" class="px-4 py-2 rounded-lg text-sm font-semibold border border-slate-200 bg-white hover:bg-slate-50">
+              <i class="fa-solid fa-broom mr-2"></i>Clear
+            </button>
+          </div>
+          <div id="csv-error" class="hidden p-3 rounded-lg border border-red-200 bg-red-50 text-red-800 text-sm"></div>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm overflow-x-auto">
+          <div id="csv-info" class="mb-3 text-sm text-slate-600"></div>
+          <div id="csv-table-container" class="overflow-x-auto">
+            <table id="csv-table" class="w-full text-sm border-collapse"></table>
+          </div>
+        </div>
+      </div>
+
+      <!-- SQL Query Explainer Tool -->
+      <div id="tool-sql-explainer" class="tool-section">
+        <div class="mb-6 flex items-center justify-between">
+          <h2 class="text-2xl font-bold flex items-center gap-3">
+            <i class="fa-solid fa-database text-cyan-600"></i>
+            SQL Query Explainer
+          </h2>
+          <button onclick="showDashboard()" class="px-4 py-2 rounded-lg text-sm font-semibold border border-slate-200 bg-white hover:bg-slate-50">
+            <i class="fa-solid fa-arrow-left mr-2"></i>Back to Dashboard
+          </button>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm mb-6">
+          <label class="block text-sm font-semibold mb-2">Paste SQL Query</label>
+          <textarea id="sql-input" rows="8" class="w-full p-3 border border-slate-300 rounded-lg font-mono text-sm" placeholder="SELECT u.name, o.total FROM users u JOIN orders o ON u.id = o.user_id WHERE o.status = 'completed' ORDER BY o.total DESC;"></textarea>
+          <div class="flex gap-2 mt-3">
+            <button id="sql-explain" class="px-4 py-2 rounded-lg text-sm font-semibold text-white" style="background:var(--primary-blue);">
+              <i class="fa-solid fa-lightbulb mr-2"></i>Explain Query
+            </button>
+            <button id="sql-clear" class="px-4 py-2 rounded-lg text-sm font-semibold border border-slate-200 bg-white hover:bg-slate-50">
+              <i class="fa-solid fa-broom mr-2"></i>Clear
+            </button>
+          </div>
+          <div id="sql-error" class="hidden mt-3 p-3 rounded-lg border border-red-200 bg-red-50 text-red-800 text-sm"></div>
+        </div>
+
+        <div id="sql-results" class="space-y-4">
+          <div class="bg-white border border-slate-200 rounded-xl p-5">
+            <h3 class="font-bold mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list text-blue-600"></i>Query Structure
+            </h3>
+            <div id="sql-structure" class="space-y-2"></div>
+          </div>
+          <div class="bg-white border border-slate-200 rounded-xl p-5">
+            <h3 class="font-bold mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-link text-green-600"></i>Joins & Relationships
+            </h3>
+            <div id="sql-joins" class="space-y-2"></div>
+          </div>
+          <div class="bg-white border border-slate-200 rounded-xl p-5">
+            <h3 class="font-bold mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-filter text-orange-600"></i>Filters & Conditions
+            </h3>
+            <div id="sql-filters" class="space-y-2"></div>
+          </div>
+          <div class="bg-white border border-slate-200 rounded-xl p-5">
+            <h3 class="font-bold mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-triangle-exclamation text-red-600"></i>Potential Issues
+            </h3>
+            <div id="sql-issues" class="space-y-2"></div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Privacy Notice -->
+    <section class="mt-12 p-6 bg-blue-50 border border-blue-200 rounded-xl" id="privacy-notice">
+      <div class="flex items-start gap-3">
+        <i class="fa-solid fa-shield-halved text-blue-600 mt-1"></i>
+        <div>
+          <h3 class="font-bold text-blue-900 mb-2">Privacy & Security</h3>
+          <p class="text-sm text-blue-800">
+            All tools run <strong>entirely in your browser</strong>. No data is sent to any server. 
+            No tracking. No analytics. No storage. Your inputs never leave your device.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-200 mt-16">
+    <div class="max-w-[1400px] mx-auto px-4 py-8">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-600">
+        <div>
+          <strong class="text-slate-800">Garry Micro Dev Utilities</strong> · 
+          A collection of browser-only developer tools
+        </div>
+        <div class="flex items-center gap-4">
+          <a href="https://github.com/girijashankarj/garry-micro-dev-utilities" target="_blank" rel="noopener noreferrer" class="hover:text-blue-600">
+            <i class="fa-brands fa-github mr-1"></i>GitHub
+          </a>
+          <span>MIT License</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Swagger UI bundle - Loaded when needed -->
+  <script src="https://unpkg.com/swagger-ui-dist@5.17.14/swagger-ui-bundle.js"></script>
+  <script src="https://unpkg.com/swagger-ui-dist@5.17.14/swagger-ui-standalone-preset.js"></script>
+
+  <script>
+    'use strict';
+
+    // Navigation
+    function showDashboard(){
+      document.getElementById('hero-section').style.display = 'block';
+      document.getElementById('tools-grid').style.display = 'block';
+      document.getElementById('privacy-notice').style.display = 'block';
+      document.querySelectorAll('.tool-section').forEach(section => {
+        section.classList.remove('active');
+      });
+      document.querySelectorAll('.tool-card').forEach(card => {
+        card.classList.remove('active');
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showTool(toolId){
+      document.getElementById('hero-section').style.display = 'none';
+      document.getElementById('tools-grid').style.display = 'none';
+      document.getElementById('privacy-notice').style.display = 'none';
+      document.querySelectorAll('.tool-section').forEach(section => {
+        section.classList.remove('active');
+      });
+      document.querySelectorAll('.tool-card').forEach(card => {
+        card.classList.remove('active');
+      });
+      
+      const toolSection = document.getElementById(`tool-${toolId}`);
+      const toolCard = document.querySelector(`[data-tool="${toolId}"]`);
+      
+      if(toolSection){
+        toolSection.classList.add('active');
+        if(toolCard) toolCard.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    // Tool card click handlers
+    document.querySelectorAll('.tool-card').forEach(card => {
+      card.addEventListener('click', function(){
+        const toolId = this.getAttribute('data-tool');
+        showTool(toolId);
+      });
+    });
+
+    // OpenAPI Viewer Tool Logic
+    const $ = (id) => document.getElementById(id);
+
+    let swaggerUI = null;
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
+    function setStatus(msg){ 
+      const statusEl = $("openapi-status");
+      if(statusEl){
+        statusEl.textContent = msg || ""; 
+        statusEl.setAttribute('aria-live', msg ? 'polite' : 'off');
+      }
+    }
+    
+    function showError(msg){
+      const errorBox = $("openapi-errorBox");
+      if(!errorBox) return;
+      
+      if(!msg){ 
+        errorBox.classList.add("hidden"); 
+        errorBox.textContent=""; 
+        errorBox.setAttribute('aria-live', 'off');
+        return; 
+      }
+      errorBox.classList.remove("hidden");
+      errorBox.textContent = msg;
+      errorBox.setAttribute('aria-live', 'assertive');
+    }
+    
+    function showLoading(show){
+      const loadingIndicator = $("openapi-loadingIndicator");
+      if(loadingIndicator){
+        if(show){
+          loadingIndicator.classList.remove("hidden");
+        } else {
+          loadingIndicator.classList.add("hidden");
+        }
+      }
+    }
+    
+    function validateOpenAPISpec(spec){
+      if(!spec || typeof spec !== 'object'){
+        throw new Error("Invalid specification: must be an object");
+      }
+      
+      if(!spec.openapi && !spec.swagger){
+        throw new Error("Invalid OpenAPI specification: missing 'openapi' or 'swagger' field");
+      }
+      
+      const version = spec.openapi || spec.swagger;
+      if(spec.openapi && !version.startsWith('3.')){
+        throw new Error(`Unsupported OpenAPI version: ${version}. This viewer supports OpenAPI 3.x`);
+      }
+      
+      if(!spec.info || !spec.info.title){
+        throw new Error("Invalid OpenAPI specification: missing 'info.title'");
+      }
+      
+      return true;
+    }
+
+    function initSwagger(spec){
+      try {
+        validateOpenAPISpec(spec);
+        
+        const container = document.querySelector("#swagger-ui");
+        if(!container){
+          throw new Error("Swagger UI container not found");
+        }
+        container.innerHTML = "";
+
+        swaggerUI = SwaggerUIBundle({
+          spec,
+          dom_id: "#swagger-ui",
+          deepLinking: true,
+          presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
+          layout: "BaseLayout",
+          tryItOutEnabled: true,
+          displayRequestDuration: true,
+          filter: true,
+          validatorUrl: null,
+          onComplete: function(){
+            setStatus("Specification rendered successfully");
+            showLoading(false);
+          },
+          onFailure: function(err){
+            showError("Failed to render Swagger UI: " + (err.message || "Unknown error"));
+            showLoading(false);
+          }
+        });
+
+        window.ui = swaggerUI;
+      } catch(err){
+        throw new Error("Failed to initialize Swagger UI: " + err.message);
+      }
+    }
+
+    function parseSpecText(text, filename){
+      const lower = (filename || "").toLowerCase();
+      try{
+        if(lower.endsWith(".json")){
+          return JSON.parse(text);
+        }
+        try{
+          return jsyaml.load(text);
+        }catch(yamlErr){
+          return JSON.parse(text);
+        }
+      }catch(err){
+        throw new Error("Unable to parse file. Make sure it is valid OpenAPI YAML or JSON. Details: " + err.message);
+      }
+    }
+
+    async function loadSample(){
+      setStatus("Loading sample spec (pizza-store.yaml) …");
+      showError(null);
+      showLoading(true);
+      
+      try{
+        const res = await fetch("samples/pizza-store.yaml", { 
+          cache: "no-store",
+          headers: {
+            'Accept': 'text/yaml, application/yaml, text/plain, */*'
+          }
+        });
+        
+        if(!res.ok){
+          throw new Error(`HTTP ${res.status}: Could not fetch sample file. If you opened the HTML via file://, run a local server (e.g., python3 -m http.server 8080).`);
+        }
+        
+        const text = await res.text();
+        if(!text || text.trim().length === 0){
+          throw new Error("Sample file is empty");
+        }
+        
+        const spec = parseSpecText(text, "pizza-store.yaml");
+        initSwagger(spec);
+        setStatus("Sample loaded: pizza-store.yaml");
+      }catch(err){
+        showError(
+          "Sample load failed.\n" +
+          "Fix: Run a local server.\n" +
+          "Example: python3 -m http.server 8080\n\n" +
+          "Error: " + err.message
+        );
+        setStatus("");
+        showLoading(false);
+      }
+    }
+
+    // OpenAPI file input handler
+    const openapiFileInput = $("openapi-fileInput");
+    if(openapiFileInput){
+      openapiFileInput.addEventListener("change", async (e) => {
+        const file = e.target.files && e.target.files[0];
+        if(!file) return;
+
+        if(file.size > MAX_FILE_SIZE){
+          showError(`File too large. Maximum size is ${MAX_FILE_SIZE / 1024 / 1024}MB. Your file is ${(file.size / 1024 / 1024).toFixed(2)}MB.`);
+          openapiFileInput.value = "";
+          setStatus("");
+          return;
+        }
+
+        setStatus(`Reading: ${file.name} …`);
+        showError(null);
+        showLoading(true);
+
+        const reader = new FileReader();
+        reader.onload = () => {
+          try{
+            const text = String(reader.result || "");
+            if(!text || text.trim().length === 0){
+              throw new Error("File is empty");
+            }
+            
+            const spec = parseSpecText(text, file.name);
+            initSwagger(spec);
+            setStatus(`Rendered: ${file.name}`);
+          }catch(err){
+            showError(err.message);
+            setStatus("");
+            showLoading(false);
+          }
+        };
+        reader.onerror = () => {
+          showError("Failed to read file. Please try again.");
+          setStatus("");
+          showLoading(false);
+        };
+        reader.onabort = () => {
+          showError("File reading was cancelled.");
+          setStatus("");
+          showLoading(false);
+        };
+        reader.readAsText(file);
+      });
+    }
+
+    // OpenAPI clear button
+    const openapiBtnClear = $("openapi-btnClear");
+    if(openapiBtnClear){
+      openapiBtnClear.addEventListener("click", () => {
+        if(openapiFileInput) openapiFileInput.value = "";
+        showError(null);
+        showLoading(false);
+        setStatus("Cleared. Upload a file or load sample.");
+        
+        const container = document.querySelector("#swagger-ui");
+        if(container){
+          container.innerHTML = `
+            <div class="p-6 text-sm text-slate-600">
+              <div class="font-semibold mb-1">No spec loaded</div>
+              <div>Upload an OpenAPI YAML/JSON file, or click <span class="font-semibold">Load Sample</span>.</div>
+            </div>`;
+        }
+        
+        if(swaggerUI && typeof swaggerUI.getSystem === 'function'){
+          try {
+            swaggerUI = null;
+            window.ui = null;
+          } catch(e){
+            // Ignore cleanup errors
+          }
+        }
+      });
+    }
+
+    // OpenAPI sample button
+    const openapiBtnSample = $("openapi-btnSample");
+    if(openapiBtnSample){
+      openapiBtnSample.addEventListener("click", loadSample);
+    }
+
+    // ============================================
+    // JWT Inspector Tool
+    // ============================================
+    function decodeJWT(token){
+      try{
+        const parts = token.trim().split('.');
+        if(parts.length !== 3) throw new Error('Invalid JWT format');
+        
+        const header = JSON.parse(atob(parts[0].replace(/-/g, '+').replace(/_/g, '/')));
+        const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+        
+        return { header, payload, valid: true };
+      }catch(e){
+        throw new Error('Invalid JWT: ' + e.message);
+      }
+    }
+
+    function formatJWTWarnings(payload){
+      const warnings = [];
+      const now = Math.floor(Date.now() / 1000);
+      
+      if(payload.exp){
+        if(payload.exp < now){
+          warnings.push({ type: 'error', message: 'Token has expired', icon: 'fa-clock' });
+        } else {
+          const daysLeft = Math.floor((payload.exp - now) / 86400);
+          if(daysLeft < 7){
+            warnings.push({ type: 'warning', message: `Token expires in ${daysLeft} day(s)`, icon: 'fa-clock' });
+          }
+        }
+      }
+      
+      if(payload.iat && payload.iat > now){
+        warnings.push({ type: 'warning', message: 'Token issued in the future', icon: 'fa-calendar' });
+      }
+      
+      if(!payload.exp && !payload.iat){
+        warnings.push({ type: 'info', message: 'No expiration time found', icon: 'fa-info-circle' });
+      }
+      
+      return warnings;
+    }
+
+    const jwtInput = document.getElementById('jwt-input');
+    const jwtDecodeBtn = document.getElementById('jwt-decode');
+    const jwtClearBtn = document.getElementById('jwt-clear');
+    const jwtError = document.getElementById('jwt-error');
+    const jwtHeader = document.getElementById('jwt-header');
+    const jwtPayload = document.getElementById('jwt-payload');
+    const jwtWarnings = document.getElementById('jwt-warnings');
+    const jwtResults = document.getElementById('jwt-results');
+
+    if(jwtDecodeBtn){
+      jwtDecodeBtn.addEventListener('click', () => {
+        const token = jwtInput.value.trim();
+        if(!token){
+          jwtError.textContent = 'Please paste a JWT token';
+          jwtError.classList.remove('hidden');
+          return;
+        }
+        
+        jwtError.classList.add('hidden');
+        jwtResults.style.display = 'none';
+        
+        try{
+          const decoded = decodeJWT(token);
+          jwtHeader.textContent = JSON.stringify(decoded.header, null, 2);
+          jwtPayload.textContent = JSON.stringify(decoded.payload, null, 2);
+          
+          const warnings = formatJWTWarnings(decoded.payload);
+          if(warnings.length > 0){
+            jwtWarnings.innerHTML = warnings.map(w => `
+              <div class="p-3 rounded-lg border ${w.type === 'error' ? 'border-red-200 bg-red-50 text-red-800' : w.type === 'warning' ? 'border-yellow-200 bg-yellow-50 text-yellow-800' : 'border-blue-200 bg-blue-50 text-blue-800'}">
+                <i class="fa-solid ${w.icon} mr-2"></i>${w.message}
+              </div>
+            `).join('');
+            jwtWarnings.style.display = 'block';
+          } else {
+            jwtWarnings.style.display = 'none';
+          }
+          
+          jwtResults.style.display = 'grid';
+        }catch(e){
+          jwtError.textContent = e.message;
+          jwtError.classList.remove('hidden');
+          jwtResults.style.display = 'none';
+        }
+      });
+    }
+
+    if(jwtClearBtn){
+      jwtClearBtn.addEventListener('click', () => {
+        jwtInput.value = '';
+        jwtError.classList.add('hidden');
+        jwtResults.style.display = 'none';
+        jwtWarnings.style.display = 'none';
+      });
+    }
+
+    // ============================================
+    // API Response Diff Tool
+    // ============================================
+    function deepDiff(obj1, obj2, path = ''){
+      const diffs = [];
+      
+      if(obj1 === obj2) return diffs;
+      
+      if(typeof obj1 !== typeof obj2){
+        diffs.push({ path, type: 'type-change', old: typeof obj1, new: typeof obj2, breaking: true });
+        return diffs;
+      }
+      
+      if(typeof obj1 !== 'object' || obj1 === null || obj2 === null){
+        if(obj1 !== obj2){
+          diffs.push({ path, type: 'value-change', old: obj1, new: obj2, breaking: false });
+        }
+        return diffs;
+      }
+      
+      const keys1 = Object.keys(obj1);
+      const keys2 = Object.keys(obj2);
+      const allKeys = new Set([...keys1, ...keys2]);
+      
+      for(const key of allKeys){
+        const newPath = path ? `${path}.${key}` : key;
+        if(!(key in obj1)){
+          diffs.push({ path: newPath, type: 'added', new: obj2[key], breaking: false });
+        } else if(!(key in obj2)){
+          diffs.push({ path: newPath, type: 'removed', old: obj1[key], breaking: true });
+        } else {
+          diffs.push(...deepDiff(obj1[key], obj2[key], newPath));
+        }
+      }
+      
+      return diffs;
+    }
+
+    const diffResponse1 = document.getElementById('diff-response1');
+    const diffResponse2 = document.getElementById('diff-response2');
+    const diffCompareBtn = document.getElementById('diff-compare');
+    const diffClearBtn = document.getElementById('diff-clear');
+    const diffError = document.getElementById('diff-error');
+    const diffResults = document.getElementById('diff-results');
+
+    if(diffCompareBtn){
+      diffCompareBtn.addEventListener('click', () => {
+        diffError.classList.add('hidden');
+        
+        try{
+          const json1 = JSON.parse(diffResponse1.value);
+          const json2 = JSON.parse(diffResponse2.value);
+          
+          const diffs = deepDiff(json1, json2);
+          const breakingChanges = diffs.filter(d => d.breaking);
+          
+          if(diffs.length === 0){
+            diffResults.innerHTML = '<div class="p-4 bg-green-50 border border-green-200 rounded-lg text-green-800">✓ No differences found</div>';
+          } else {
+            diffResults.innerHTML = `
+              <div class="mb-4 p-3 bg-slate-50 rounded-lg">
+                <strong>Total differences:</strong> ${diffs.length} | 
+                <strong class="text-red-600">Breaking changes:</strong> ${breakingChanges.length}
+              </div>
+              <div class="space-y-2 max-h-96 overflow-auto">
+                ${diffs.map(diff => `
+                  <div class="p-3 rounded-lg border ${diff.breaking ? 'border-red-200 bg-red-50' : 'border-blue-200 bg-blue-50'}">
+                    <div class="font-semibold text-sm">${diff.path || 'root'}</div>
+                    <div class="text-xs mt-1">
+                      ${diff.type === 'added' ? `<span class="text-green-700">+ Added:</span> ${JSON.stringify(diff.new)}` : ''}
+                      ${diff.type === 'removed' ? `<span class="text-red-700">- Removed:</span> ${JSON.stringify(diff.old)}` : ''}
+                      ${diff.type === 'value-change' ? `<span class="text-orange-700">~ Changed:</span> ${JSON.stringify(diff.old)} → ${JSON.stringify(diff.new)}` : ''}
+                      ${diff.type === 'type-change' ? `<span class="text-red-700">⚠ Type changed:</span> ${diff.old} → ${diff.new}` : ''}
+                    </div>
+                    ${diff.breaking ? '<span class="text-xs text-red-600 font-semibold">⚠ BREAKING CHANGE</span>' : ''}
+                  </div>
+                `).join('')}
+              </div>
+            `;
+          }
+        }catch(e){
+          diffError.textContent = 'Invalid JSON: ' + e.message;
+          diffError.classList.remove('hidden');
+        }
+      });
+    }
+
+    if(diffClearBtn){
+      diffClearBtn.addEventListener('click', () => {
+        diffResponse1.value = '';
+        diffResponse2.value = '';
+        diffError.classList.add('hidden');
+        diffResults.innerHTML = '';
+      });
+    }
+
+    // ============================================
+    // Curl Command Visualizer Tool
+    // ============================================
+    function parseCurl(curlCommand){
+      const result = {
+        method: 'GET',
+        url: '',
+        headers: {},
+        body: null,
+        params: {}
+      };
+      
+      const methodMatch = curlCommand.match(/-X\s+(\w+)/i);
+      if(methodMatch) result.method = methodMatch[1].toUpperCase();
+      
+      const urlMatch = curlCommand.match(/curl\s+['"]?([^\s'"]+)['"]?/i) || curlCommand.match(/https?:\/\/[^\s'"]+/);
+      if(urlMatch) result.url = urlMatch[1] || urlMatch[0];
+      
+      const headerMatches = curlCommand.matchAll(/-H\s+['"]([^'"]+)['"]/g);
+      for(const match of headerMatches){
+        const [key, value] = match[1].split(':').map(s => s.trim());
+        result.headers[key] = value;
+      }
+      
+      const dataMatch = curlCommand.match(/-d\s+['"]([^'"]+)['"]/) || curlCommand.match(/--data\s+['"]([^'"]+)['"]/);
+      if(dataMatch){
+        try{
+          result.body = JSON.parse(dataMatch[1]);
+        }catch{
+          result.body = dataMatch[1];
+        }
+      }
+      
+      return result;
+    }
+
+    const curlInput = document.getElementById('curl-input');
+    const curlParseBtn = document.getElementById('curl-parse');
+    const curlClearBtn = document.getElementById('curl-clear');
+    const curlError = document.getElementById('curl-error');
+    const curlVisualization = document.getElementById('curl-visualization');
+    const curlDetails = document.getElementById('curl-details');
+    const curlCodeOutput = document.getElementById('curl-code-output');
+    const curlShowFetch = document.getElementById('curl-show-fetch');
+    const curlShowAxios = document.getElementById('curl-show-axios');
+
+    let currentCurlData = null;
+
+    function renderCurlCode(format){
+      if(!currentCurlData) return;
+      
+      if(format === 'fetch'){
+        let code = `fetch('${currentCurlData.url}', {\n  method: '${currentCurlData.method}',\n`;
+        if(Object.keys(currentCurlData.headers).length > 0){
+          code += `  headers: ${JSON.stringify(currentCurlData.headers, null, 2)},\n`;
+        }
+        if(currentCurlData.body){
+          code += `  body: ${typeof currentCurlData.body === 'string' ? `'${currentCurlData.body}'` : JSON.stringify(currentCurlData.body, null, 2)}\n`;
+        }
+        code += '})';
+        curlCodeOutput.textContent = code;
+      } else {
+        let code = `axios.${currentCurlData.method.toLowerCase()}('${currentCurlData.url}'`;
+        const options = [];
+        if(Object.keys(currentCurlData.headers).length > 0){
+          options.push(`headers: ${JSON.stringify(currentCurlData.headers, null, 2)}`);
+        }
+        if(currentCurlData.body){
+          options.push(`data: ${typeof currentCurlData.body === 'string' ? `'${currentCurlData.body}'` : JSON.stringify(currentCurlData.body, null, 2)}`);
+        }
+        if(options.length > 0){
+          code += `, {\n  ${options.join(',\n  ')}\n})`;
+        } else {
+          code += ')';
+        }
+        curlCodeOutput.textContent = code;
+      }
+    }
+
+    if(curlParseBtn){
+      curlParseBtn.addEventListener('click', () => {
+        curlError.classList.add('hidden');
+        
+        try{
+          currentCurlData = parseCurl(curlInput.value);
+          
+          curlDetails.innerHTML = `
+            <div><strong>Method:</strong> <span class="px-2 py-1 rounded bg-blue-100 text-blue-700">${currentCurlData.method}</span></div>
+            <div><strong>URL:</strong> <code class="px-2 py-1 rounded bg-slate-100">${currentCurlData.url}</code></div>
+            ${Object.keys(currentCurlData.headers).length > 0 ? `<div><strong>Headers:</strong><pre class="mt-1 p-2 bg-slate-50 rounded text-xs">${JSON.stringify(currentCurlData.headers, null, 2)}</pre></div>` : ''}
+            ${currentCurlData.body ? `<div><strong>Body:</strong><pre class="mt-1 p-2 bg-slate-50 rounded text-xs">${JSON.stringify(currentCurlData.body, null, 2)}</pre></div>` : ''}
+          `;
+          
+          renderCurlCode('fetch');
+          curlVisualization.style.display = 'block';
+        }catch(e){
+          curlError.textContent = 'Error parsing curl command: ' + e.message;
+          curlError.classList.remove('hidden');
+        }
+      });
+    }
+
+    if(curlShowFetch) curlShowFetch.addEventListener('click', () => renderCurlCode('fetch'));
+    if(curlShowAxios) curlShowAxios.addEventListener('click', () => renderCurlCode('axios'));
+
+    if(curlClearBtn){
+      curlClearBtn.addEventListener('click', () => {
+        curlInput.value = '';
+        curlError.classList.add('hidden');
+        curlVisualization.style.display = 'none';
+        currentCurlData = null;
+      });
+    }
+
+    // ============================================
+    // API Risk Analyzer Tool
+    // ============================================
+    function analyzeOpenAPIRisks(spec){
+      const risks = [];
+      
+      if(!spec.paths || Object.keys(spec.paths).length === 0){
+        risks.push({ level: 'error', message: 'No paths defined', category: 'Structure' });
+      }
+      
+      for(const [path, methods] of Object.entries(spec.paths || {})){
+        for(const [method, operation] of Object.entries(methods)){
+          if(typeof operation !== 'object') continue;
+          
+          // Check for missing error responses
+          const responses = operation.responses || {};
+          if(!responses['400'] && !responses['422']){
+            risks.push({ level: 'warning', message: `${method.toUpperCase()} ${path} missing 400/422 error response`, category: 'Error Handling', path, method });
+          }
+          if(!responses['500']){
+            risks.push({ level: 'info', message: `${method.toUpperCase()} ${path} missing 500 error response`, category: 'Error Handling', path, method });
+          }
+          
+          // Check for weak validation
+          const params = operation.parameters || [];
+          for(const param of params){
+            if(param.in === 'query' && !param.schema){
+              risks.push({ level: 'warning', message: `${method.toUpperCase()} ${path} parameter "${param.name}" missing schema`, category: 'Validation', path, method });
+            }
+          }
+          
+          // Check request body validation
+          if(operation.requestBody && operation.requestBody.content){
+            const content = Object.values(operation.requestBody.content)[0];
+            if(content && content.schema && !content.schema.required){
+              risks.push({ level: 'info', message: `${method.toUpperCase()} ${path} request body missing required fields`, category: 'Validation', path, method });
+            }
+          }
+        }
+      }
+      
+      return risks;
+    }
+
+    const riskFileInput = document.getElementById('risk-fileInput');
+    const riskAnalyzeBtn = document.getElementById('risk-analyze');
+    const riskClearBtn = document.getElementById('risk-clear');
+    const riskError = document.getElementById('risk-error');
+    const riskResults = document.getElementById('risk-results');
+
+    if(riskAnalyzeBtn){
+      riskAnalyzeBtn.addEventListener('click', async () => {
+        const file = riskFileInput.files[0];
+        if(!file){
+          riskError.textContent = 'Please select a file';
+          riskError.classList.remove('hidden');
+          return;
+        }
+        
+        riskError.classList.add('hidden');
+        
+        const reader = new FileReader();
+        reader.onload = () => {
+          try{
+            const text = reader.result;
+            const spec = text.toLowerCase().endsWith('.json') ? JSON.parse(text) : jsyaml.load(text);
+            const risks = analyzeOpenAPIRisks(spec);
+            
+            const grouped = risks.reduce((acc, risk) => {
+              if(!acc[risk.category]) acc[risk.category] = [];
+              acc[risk.category].push(risk);
+              return acc;
+            }, {});
+            
+            riskResults.innerHTML = `
+              <div class="mb-4 p-3 bg-slate-50 rounded-lg">
+                <strong>Total issues found:</strong> ${risks.length} | 
+                <span class="text-red-600">Errors: ${risks.filter(r => r.level === 'error').length}</span> | 
+                <span class="text-yellow-600">Warnings: ${risks.filter(r => r.level === 'warning').length}</span> | 
+                <span class="text-blue-600">Info: ${risks.filter(r => r.level === 'info').length}</span>
+              </div>
+              ${Object.entries(grouped).map(([category, items]) => `
+                <div class="bg-white border border-slate-200 rounded-xl p-5 mb-4">
+                  <h3 class="font-bold mb-3">${category}</h3>
+                  <div class="space-y-2">
+                    ${items.map(risk => `
+                      <div class="p-3 rounded-lg border ${risk.level === 'error' ? 'border-red-200 bg-red-50' : risk.level === 'warning' ? 'border-yellow-200 bg-yellow-50' : 'border-blue-200 bg-blue-50'}">
+                        <div class="text-sm">${risk.message}</div>
+                        ${risk.path ? `<div class="text-xs text-slate-500 mt-1">${risk.path}</div>` : ''}
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+              `).join('')}
+            `;
+          }catch(e){
+            riskError.textContent = 'Error analyzing spec: ' + e.message;
+            riskError.classList.remove('hidden');
+          }
+        };
+        reader.readAsText(file);
+      });
+    }
+
+    if(riskClearBtn){
+      riskClearBtn.addEventListener('click', () => {
+        riskFileInput.value = '';
+        riskError.classList.add('hidden');
+        riskResults.innerHTML = '';
+      });
+    }
+
+    // ============================================
+    // JSON/YAML Formatter Tool
+    // ============================================
+    const formatterInput = document.getElementById('formatter-input');
+    const formatterFileInput = document.getElementById('formatter-fileInput');
+    const formatterFormat = document.getElementById('formatter-format');
+    const formatterFormatBtn = document.getElementById('formatter-format-btn');
+    const formatterMinifyBtn = document.getElementById('formatter-minify');
+    const formatterCopyBtn = document.getElementById('formatter-copy');
+    const formatterClearBtn = document.getElementById('formatter-clear');
+    const formatterError = document.getElementById('formatter-error');
+    const formatterOutput = document.getElementById('formatter-output');
+    const formatterStatus = document.getElementById('formatter-status');
+
+    function formatContent(input, format, minify = false){
+      try{
+        let obj;
+        if(format === 'json'){
+          obj = typeof input === 'string' ? JSON.parse(input) : input;
+          return minify ? JSON.stringify(obj) : JSON.stringify(obj, null, 2);
+        } else {
+          obj = typeof input === 'string' ? (input.trim().startsWith('{') ? JSON.parse(input) : jsyaml.load(input)) : input;
+          return minify ? jsyaml.dump(obj, { lineWidth: -1 }) : jsyaml.dump(obj, { indent: 2 });
+        }
+      }catch(e){
+        throw new Error('Invalid format: ' + e.message);
+      }
+    }
+
+    if(formatterFileInput){
+      formatterFileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if(file){
+          const reader = new FileReader();
+          reader.onload = () => {
+            formatterInput.value = reader.result;
+            if(file.name.endsWith('.yaml') || file.name.endsWith('.yml')){
+              formatterFormat.value = 'yaml';
+            } else {
+              formatterFormat.value = 'json';
+            }
+          };
+          reader.readAsText(file);
+        }
+      });
+    }
+
+    if(formatterFormatBtn){
+      formatterFormatBtn.addEventListener('click', () => {
+        formatterError.classList.add('hidden');
+        try{
+          const output = formatContent(formatterInput.value, formatterFormat.value);
+          formatterOutput.textContent = output;
+          formatterStatus.textContent = '✓ Formatted successfully';
+        }catch(e){
+          formatterError.textContent = e.message;
+          formatterError.classList.remove('hidden');
+        }
+      });
+    }
+
+    if(formatterMinifyBtn){
+      formatterMinifyBtn.addEventListener('click', () => {
+        formatterError.classList.add('hidden');
+        try{
+          const current = formatterOutput.textContent || formatterInput.value;
+          const output = formatContent(current, formatterFormat.value, true);
+          formatterOutput.textContent = output;
+          formatterStatus.textContent = '✓ Minified successfully';
+        }catch(e){
+          formatterError.textContent = e.message;
+          formatterError.classList.remove('hidden');
+        }
+      });
+    }
+
+    if(formatterCopyBtn){
+      formatterCopyBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(formatterOutput.textContent);
+        formatterStatus.textContent = '✓ Copied to clipboard';
+        setTimeout(() => formatterStatus.textContent = '', 2000);
+      });
+    }
+
+    if(formatterClearBtn){
+      formatterClearBtn.addEventListener('click', () => {
+        formatterInput.value = '';
+        formatterOutput.textContent = '';
+        formatterError.classList.add('hidden');
+        formatterStatus.textContent = '';
+      });
+    }
+
+    // ============================================
+    // CSV Explorer Tool
+    // ============================================
+    function parseCSV(text){
+      const lines = text.split('\n').filter(l => l.trim());
+      if(lines.length === 0) return { headers: [], rows: [] };
+      
+      const headers = lines[0].split(',').map(h => h.trim().replace(/^["']|["']$/g, ''));
+      const rows = lines.slice(1).map(line => {
+        const values = line.split(',').map(v => v.trim().replace(/^["']|["']$/g, ''));
+        const row = {};
+        headers.forEach((h, i) => { row[h] = values[i] || ''; });
+        return row;
+      });
+      
+      return { headers, rows };
+    }
+
+    const csvFileInput = document.getElementById('csv-fileInput');
+    const csvSearch = document.getElementById('csv-search');
+    const csvExportJsonBtn = document.getElementById('csv-export-json');
+    const csvClearBtn = document.getElementById('csv-clear');
+    const csvError = document.getElementById('csv-error');
+    const csvInfo = document.getElementById('csv-info');
+    const csvTable = document.getElementById('csv-table');
+
+    let csvData = null;
+
+    function renderCSVTable(data, searchTerm = ''){
+      let rows = data.rows;
+      if(searchTerm){
+        rows = rows.filter(row => 
+          Object.values(row).some(val => val.toLowerCase().includes(searchTerm.toLowerCase()))
+        );
+      }
+      
+      csvInfo.textContent = `Showing ${rows.length} of ${data.rows.length} rows`;
+      
+      csvTable.innerHTML = `
+        <thead class="bg-slate-100">
+          <tr>${data.headers.map(h => `<th class="p-2 border border-slate-300 text-left font-semibold">${h}</th>`).join('')}</tr>
+        </thead>
+        <tbody>
+          ${rows.map(row => `<tr>${data.headers.map(h => `<td class="p-2 border border-slate-300">${row[h] || ''}</td>`).join('')}</tr>`).join('')}
+        </tbody>
+      `;
+    }
+
+    if(csvFileInput){
+      csvFileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if(file){
+          const reader = new FileReader();
+          reader.onload = () => {
+            try{
+              csvData = parseCSV(reader.result);
+              renderCSVTable(csvData);
+            }catch(e){
+              csvError.textContent = 'Error parsing CSV: ' + e.message;
+              csvError.classList.remove('hidden');
+            }
+          };
+          reader.readAsText(file);
+        }
+      });
+    }
+
+    if(csvSearch){
+      csvSearch.addEventListener('input', () => {
+        if(csvData) renderCSVTable(csvData, csvSearch.value);
+      });
+    }
+
+    if(csvExportJsonBtn){
+      csvExportJsonBtn.addEventListener('click', () => {
+        if(csvData){
+          const json = JSON.stringify(csvData.rows, null, 2);
+          const blob = new Blob([json], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'export.json';
+          a.click();
+          URL.revokeObjectURL(url);
+        }
+      });
+    }
+
+    if(csvClearBtn){
+      csvClearBtn.addEventListener('click', () => {
+        csvFileInput.value = '';
+        csvSearch.value = '';
+        csvError.classList.add('hidden');
+        csvTable.innerHTML = '';
+        csvInfo.textContent = '';
+        csvData = null;
+      });
+    }
+
+    // ============================================
+    // SQL Query Explainer Tool
+    // ============================================
+    function explainSQL(query){
+      const upper = query.toUpperCase();
+      const explanation = {
+        structure: [],
+        joins: [],
+        filters: [],
+        issues: []
+      };
+      
+      // Detect SELECT
+      if(upper.includes('SELECT')){
+        const selectMatch = query.match(/SELECT\s+(.+?)\s+FROM/i);
+        if(selectMatch){
+          explanation.structure.push(`Selecting: ${selectMatch[1]}`);
+        }
+      }
+      
+      // Detect FROM
+      const fromMatch = query.match(/FROM\s+(\w+)/i);
+      if(fromMatch){
+        explanation.structure.push(`From table: ${fromMatch[1]}`);
+      }
+      
+      // Detect JOINs
+      const joinMatches = query.matchAll(/(LEFT|RIGHT|INNER|FULL)?\s*JOIN\s+(\w+)\s+ON\s+(.+?)(?=\s+(?:WHERE|ORDER|GROUP|LIMIT|$))/gi);
+      for(const match of joinMatches){
+        explanation.joins.push({
+          type: match[1] || 'INNER',
+          table: match[2],
+          condition: match[3]
+        });
+      }
+      
+      // Detect WHERE
+      const whereMatch = query.match(/WHERE\s+(.+?)(?=\s+(?:ORDER|GROUP|LIMIT|$))/i);
+      if(whereMatch){
+        explanation.filters.push(`Filter: ${whereMatch[1]}`);
+      }
+      
+      // Detect ORDER BY
+      const orderMatch = query.match(/ORDER\s+BY\s+(.+?)(?=\s+(?:LIMIT|$))/i);
+      if(orderMatch){
+        explanation.structure.push(`Ordered by: ${orderMatch[1]}`);
+      }
+      
+      // Detect potential issues
+      if(!whereMatch && upper.includes('SELECT *')){
+        explanation.issues.push({ level: 'warning', message: 'SELECT * without WHERE clause may return large datasets' });
+      }
+      
+      if(upper.includes('SELECT *') && explanation.joins.length > 0){
+        explanation.issues.push({ level: 'info', message: 'SELECT * with JOINs may cause column name conflicts' });
+      }
+      
+      if(upper.includes('LIKE') && !upper.includes('INDEX')){
+        explanation.issues.push({ level: 'warning', message: 'LIKE queries without indexes can be slow' });
+      }
+      
+      return explanation;
+    }
+
+    const sqlInput = document.getElementById('sql-input');
+    const sqlExplainBtn = document.getElementById('sql-explain');
+    const sqlClearBtn = document.getElementById('sql-clear');
+    const sqlError = document.getElementById('sql-error');
+    const sqlResults = document.getElementById('sql-results');
+    const sqlStructure = document.getElementById('sql-structure');
+    const sqlJoins = document.getElementById('sql-joins');
+    const sqlFilters = document.getElementById('sql-filters');
+    const sqlIssues = document.getElementById('sql-issues');
+
+    if(sqlExplainBtn){
+      sqlExplainBtn.addEventListener('click', () => {
+        sqlError.classList.add('hidden');
+        
+        try{
+          const explanation = explainSQL(sqlInput.value);
+          
+          sqlStructure.innerHTML = explanation.structure.length > 0 
+            ? explanation.structure.map(s => `<div class="p-2 bg-blue-50 rounded">${s}</div>`).join('')
+            : '<div class="text-slate-500 text-sm">No structure detected</div>';
+          
+          sqlJoins.innerHTML = explanation.joins.length > 0
+            ? explanation.joins.map(j => `<div class="p-2 bg-green-50 rounded"><strong>${j.type} JOIN</strong> ${j.table} ON ${j.condition}</div>`).join('')
+            : '<div class="text-slate-500 text-sm">No joins detected</div>';
+          
+          sqlFilters.innerHTML = explanation.filters.length > 0
+            ? explanation.filters.map(f => `<div class="p-2 bg-orange-50 rounded">${f}</div>`).join('')
+            : '<div class="text-slate-500 text-sm">No filters detected</div>';
+          
+          sqlIssues.innerHTML = explanation.issues.length > 0
+            ? explanation.issues.map(i => `<div class="p-2 rounded ${i.level === 'warning' ? 'bg-yellow-50 border border-yellow-200' : 'bg-blue-50 border border-blue-200'}">${i.message}</div>`).join('')
+            : '<div class="text-green-600 text-sm">✓ No issues detected</div>';
+          
+          sqlResults.style.display = 'block';
+        }catch(e){
+          sqlError.textContent = 'Error explaining query: ' + e.message;
+          sqlError.classList.remove('hidden');
+        }
+      });
+    }
+
+    if(sqlClearBtn){
+      sqlClearBtn.addEventListener('click', () => {
+        sqlInput.value = '';
+        sqlError.classList.add('hidden');
+        sqlResults.style.display = 'none';
+      });
+    }
+
+    // Error boundaries
+    window.addEventListener("error", (e) => {
+      console.error("Unhandled error:", e.error);
+    });
+    
+    window.addEventListener("unhandledrejection", (e) => {
+      console.error("Unhandled promise rejection:", e.reason);
+    });
+  </script>
+</body>
+</html>
