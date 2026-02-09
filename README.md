@@ -119,18 +119,38 @@ All dependencies are loaded from reputable CDNs with integrity checks where poss
 
 ## Production Deployment
 
+> **📖 For detailed deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md)**
+
 ### GitHub Pages
 
-1. Push your code to a GitHub repository
-2. Go to **Settings** → **Pages**
-3. Select source branch (e.g., `main`)
-4. The GitHub Actions workflow will automatically deploy on push
+**Important:** GitHub Pages must be enabled before the workflow can deploy.
 
-Or use the included workflow:
+#### Step 1: Enable GitHub Pages
+
+1. Go to: https://github.com/girijashankarj/garry-openapi-swagger-viewer/settings/pages
+2. Under **Source**, select:
+   - **Source**: `Deploy from a branch`
+   - **Branch**: `main`
+   - **Folder**: `/ (root)`
+3. Click **Save**
+4. Wait 1-2 minutes for Pages to initialize
+
+#### Step 2: Deploy
+
+**Automatic (on push):**
 ```bash
 git push origin main
-# GitHub Actions will deploy automatically
+# Check status: https://github.com/girijashankarj/garry-openapi-swagger-viewer/actions
 ```
+
+**Manual trigger:**
+- Go to: https://github.com/girijashankarj/garry-openapi-swagger-viewer/actions
+- Select "Deploy to GitHub Pages" → Run workflow
+
+#### Step 3: Access Your Site
+
+After deployment (1-2 minutes), your site will be live at:
+- **https://girijashankarj.github.io/garry-openapi-swagger-viewer/openapi-viewer.html**
 
 ### Netlify
 

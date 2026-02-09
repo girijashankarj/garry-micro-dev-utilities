@@ -1,5 +1,8 @@
 name: Deploy to GitHub Pages
 
+# Note: GitHub Pages must be enabled in repository Settings → Pages before this workflow can run
+# Configure Pages to deploy from the 'main' branch
+
 on:
   push:
     branches:
@@ -36,3 +39,9 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v3
+      
+      - name: Deployment URL
+        run: |
+          echo "🚀 Deployment successful!"
+          echo "📄 Site URL: ${{ steps.deployment.outputs.page_url }}"
+          echo "📝 Access your viewer at: ${{ steps.deployment.outputs.page_url }}/openapi-viewer.html"
