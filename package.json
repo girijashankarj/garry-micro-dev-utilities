@@ -1,0 +1,34 @@
+{
+  "name": "garry-openapi-swagger-viewer",
+  "version": "1.0.0",
+  "description": "Single-file Swagger UI viewer for OpenAPI specs",
+  "main": "openapi-viewer.html",
+  "scripts": {
+    "start": "python3 -m http.server 8080",
+    "serve": "python3 -m http.server 8080",
+    "validate": "node scripts/validate-openapi.js",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "keywords": [
+    "openapi",
+    "swagger",
+    "api",
+    "documentation",
+    "viewer",
+    "yaml",
+    "json"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/garry-openapi-swagger-viewer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/garry-openapi-swagger-viewer/issues"
+  },
+  "homepage": "https://github.com/yourusername/garry-openapi-swagger-viewer#readme",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
