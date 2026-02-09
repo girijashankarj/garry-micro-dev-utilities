@@ -1,51 +1,55 @@
 name: Deploy to GitHub Pages
 
-# This workflow automatically enables GitHub Pages if not already enabled
-# Pages will be configured to deploy from the 'main' branch
-
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
 
 permissions:
   contents: read
   pages: write
   id-token: write
-  administration: write
-  administration: write
 
 concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  group: pages
+  cancel-in-progress: true
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build:
+    name: Build
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
         with:
-          enablement: true
-      
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type-check
+        run: npx tsc -b
+
+      - name: Build
+        env:
+          GITHUB_PAGES: 'true'
+        run: npx vite build
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'
-      
+          path: dist
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v3
-      
-      - name: Deployment URL
-        run: |
-          echo "🚀 Deployment successful!"
-          echo "📄 Site URL: ${{ steps.deployment.outputs.page_url }}"
-          echo "🛠️ Access Garry Micro Dev Utilities at: ${{ steps.deployment.outputs.page_url }}"
+        uses: actions/deploy-pages@v4
