@@ -3,8 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { FileInput } from '@/components/ui/file-input';
 import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { InfoTooltip, Tooltip } from '@/components/ui/tooltip';
+import { InfoTooltip } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
 
 // Lazy load gpt-tokenizer to handle import errors gracefully
