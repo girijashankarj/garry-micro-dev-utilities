@@ -1,7 +1,7 @@
 name: Deploy to GitHub Pages
 
-# Note: GitHub Pages must be enabled in repository Settings → Pages before this workflow can run
-# Configure Pages to deploy from the 'main' branch
+# This workflow automatically enables GitHub Pages if not already enabled
+# Pages will be configured to deploy from the 'main' branch
 
 on:
   push:
@@ -13,6 +13,8 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  administration: write
+  administration: write
 
 concurrency:
   group: "pages"
@@ -30,6 +32,8 @@ jobs:
       
       - name: Setup Pages
         uses: actions/configure-pages@v4
+        with:
+          enablement: true
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
