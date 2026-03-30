@@ -13,6 +13,8 @@ node_modules
 # Build output
 dist
 dist-extension
+garry-micro-dev-utilities-chrome.zip
+chrome-extension.zip
 dist-ssr
 *.local
 
