@@ -18,26 +18,99 @@
 
 ## Table of contents
 
-| Section                                                                            | What you will find                                       |
-| ---------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| [Vision and scope](#vision-and-scope)                                              | Product goals and non-goals                              |
-| [Glossary](#glossary)                                                              | Abbreviations used in the app and docs                   |
-| [Distribution](#distribution-web-progressive-web-app--pwa-chrome-extension-mobile) | Web, Progressive Web App (PWA), Chrome extension, phones |
-| [Quick start](#quick-start)                                                        | Clone, install, run, build                               |
-| [NPM scripts](#npm-scripts)                                                        | All package.json commands                                |
-| [Tool catalog](#tool-catalog)                                                      | Every utility with id, category, and summary             |
-| [Architecture](#architecture)                                                      | Diagrams: runtime, navigation, CI/CD                     |
-| [Security and privacy](#security-and-privacy)                                      | Local-only processing                                    |
-| [Technology stack](#technology-stack)                                              | Major dependencies                                       |
-| [Browser support](#browser-support)                                                | Supported clients                                        |
-| [Project structure](#project-structure)                                            | Repository layout                                        |
-| [Contributing and links](#contributing-and-links)                                  | How to extend the suite                                  |
+| Section                                                                            | What you will find                            |
+| ---------------------------------------------------------------------------------- | --------------------------------------------- |
+| [Project agenda](#project-agenda)                                                  | Mission, audience, principles, and priorities |
+| [Product overview diagram](#product-overview-diagram)                              | Mermaid map from goals to tools and channels  |
+| [Vision and scope](#vision-and-scope)                                              | Goals, non-goals, and boundaries              |
+| [Glossary](#glossary)                                                              | Abbreviations used in the app and docs        |
+| [Distribution](#distribution-web-progressive-web-app--pwa-chrome-extension-mobile) | Web, PWA, Chrome extension, mobile            |
+| [Quick start](#quick-start)                                                        | Clone, install, run, build                    |
+| [NPM scripts](#npm-scripts)                                                        | All package.json commands                     |
+| [Tool catalog](#tool-catalog)                                                      | Every utility with id, category, and summary  |
+| [Tool transparency](#tool-transparency)                                            | How the app documents dependencies per tool   |
+| [Architecture](#architecture)                                                      | Runtime, navigation, CI/CD diagrams           |
+| [Security and privacy](#security-and-privacy)                                      | Local-only processing                         |
+| [Technology stack](#technology-stack)                                              | Major dependencies                            |
+| [Browser support](#browser-support)                                                | Supported clients                             |
+| [Project structure](#project-structure)                                            | Repository layout                             |
+| [Contributing and links](#contributing-and-links)                                  | How to extend the suite                       |
+
+---
+
+## Project agenda
+
+**Garry Micro Dev Utilities** exists so engineers, testers, and technical leads can do **small, sharp jobs** (diff JSON, skim OpenAPI, scrub PII, plan delivery) **without** shipping data to a product backend or creating an account. The agenda is deliberately narrow: **one curated suite**, **one codebase**, **multiple surfaces** (web, PWA, Chrome extension).
+
+| Pillar                | What we optimize for                                                                                            |
+| --------------------- | --------------------------------------------------------------------------------------------------------------- |
+| **Privacy by design** | Processing stays in the browser; no first-party server for tool workloads.                                      |
+| **Clarity**           | One tool, one screen — easy to find, open, and leave.                                                           |
+| **Reach**             | Same React app as a hosted site, installable PWA, and optional MV3 extension.                                   |
+| **Honesty**           | Each tool can surface **which npm packages** affect its behavior (see [Tool transparency](#tool-transparency)). |
+| **Maintainability**   | TypeScript, lint + test in CI, documented patterns for adding tools.                                            |
+
+**Audience:** Individual contributors and leads who already live in browsers and terminals and want **fast utilities** aligned with API work, data inspection, and lightweight planning or governance (RACI, ADRs, NFRs).
+
+**Near-term focus (project direction):**
+
+- Keep the tool set **curated** — prefer a small set of high-quality tools over a sprawling catalog.
+- Preserve **offline-friendly** web builds (PWA + service worker) and clear **mobile** guidance (Add to Home Screen).
+- Ship the **Chrome extension** as a reproducible artifact (CI zip + optional GitHub Release asset).
+- Improve **discoverability** (search, categories, recent tools) without adding accounts or telemetry.
+
+**Explicit non-goals:** Hosted multi-tenant SaaS, user databases, generic low-code platforms, or replacing IDEs and API gateways.
+
+---
+
+## Product overview diagram
+
+This diagram ties the **agenda** to **tool pillars**, **build outputs**, and **how users** reach the app.
+
+```mermaid
+flowchart TB
+  subgraph mission [Mission]
+    M[Local-first utilities<br/>no login, no backend for tools]
+  end
+  subgraph principles [Principles]
+    P1[Privacy]
+    P2[One job per tool]
+    P3[Same codebase, many surfaces]
+    P4[Transparent dependencies]
+  end
+  subgraph pillars [Tool pillars]
+    T1[Developer Essentials]
+    T2[Diagrams and Modeling]
+    T3[APIs and Integration]
+    T4[Data and Files]
+    T5[Planning and Delivery]
+    T6[Architecture and Governance]
+  end
+  subgraph builds [Build outputs]
+    W[Vite web plus PWA<br/>dist]
+    E[Vite extension<br/>dist-extension]
+  end
+  subgraph channels [Channels]
+    C1[Hosted URL]
+    C2[PWA install]
+    C3[Chrome extension]
+  end
+  subgraph users [Users]
+    U1[Engineers and testers]
+    U2[Tech leads and architects]
+  end
+  mission --> principles
+  principles --> pillars
+  pillars --> builds
+  builds --> channels
+  channels --> users
+```
 
 ---
 
 ## Vision and scope
 
-**Garry Micro Dev Utilities** is a curated **single-page application (SPA)** of small tools that run entirely in the browser. It is inspired by the “one job per page” clarity of sites like [ilovepdf.com](https://www.ilovepdf.com), but aimed at **software engineers, testers, and technical leads**.
+**Garry Micro Dev Utilities** is a **single-page application (SPA)** of small tools that run entirely in the browser. It is inspired by the “one job per page” clarity of sites like [ilovepdf.com](https://www.ilovepdf.com), but aimed at **software engineers, testers, and technical leads**.
 
 | Goal                                | Detail                                                                                                                           |
 | ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
@@ -122,9 +195,11 @@ flowchart TB
 
 | Topic                                            | Detail                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Why the install preview was missing**          | Chrome’s install UI expects **PNG** icons (**192×192** and **512×512**). A manifest that only listed **SVG** often shows a blank or generic install preview. This repo now ships **`public/pwa-192.png`**, **`public/pwa-512.png`**, and **`public/apple-touch-icon.png`** (regenerated from `favicon.svg` via `npm run icons` or automatically before `build:web`).                                                     |
+| **Why the install preview was missing**          | Chrome’s install UI expects **PNG** icons (**192×192** and **512×512**). A manifest that only listed **SVG** often shows a blank or generic install preview. This repo ships **`public/pwa-192.png`**, **`public/pwa-512.png`**, and **`public/apple-touch-icon.png`** (regenerated from `favicon.svg` via `npm run icons` or automatically before `build:web`).                                                         |
 | **Which browser for “like an app” (standalone)** | **Chrome or Edge** (desktop or Android): install from the menu → opens in its **own window** with `display: standalone`. **Safari (iOS / iPadOS)**: **Share → Add to Home Screen** — standalone home-screen icon (use **`apple-touch-icon`**). **Samsung Internet** (Android): similar to Chrome. Use the **real HTTPS URL** of the site (or `localhost` for dev); installability does not apply to raw `file://` pages. |
 | **After changing the logo**                      | Run **`npm run icons`** and commit the updated PNGs under **`public/`**.                                                                                                                                                                                                                                                                                                                                                 |
+
+**Release builds:** When you **publish a GitHub Release**, the workflow [`.github/workflows/release-extension.yml`](.github/workflows/release-extension.yml) builds the extension and attaches **`garry-micro-dev-utilities-chrome.zip`** as a release asset (Chrome Web Store–ready layout). CI on every qualifying run also uploads a **`chrome-extension`** artifact from the zipped `dist-extension` output.
 
 ---
 
@@ -150,32 +225,35 @@ flowchart TB
 
 ## NPM scripts
 
-| Script                    | Purpose                                                               |
-| ------------------------- | --------------------------------------------------------------------- |
-| `npm run dev`             | Start Vite dev server                                                 |
-| `npm run build`           | Alias for `build:web`                                                 |
-| `npm run build:web`       | Typecheck (`tsc -b`) then Vite production build (includes PWA assets) |
-| `npm run build:extension` | Typecheck then extension bundle to `dist-extension/`                  |
-| `npm run build:all`       | `build:web` then `build:extension`                                    |
-| `npm run preview`         | Preview the web production build                                      |
-| `npm run lint`            | ESLint with zero warnings allowed                                     |
-| `npm run lint:fix`        | ESLint with auto-fix                                                  |
-| `npm run format`          | Prettier write                                                        |
-| `npm run format:check`    | Prettier check only                                                   |
-| `npm test`                | Jest with coverage                                                    |
-| `npm run validate`        | Sample OpenAPI validation helper script                               |
+| Script                    | Purpose                                                                         |
+| ------------------------- | ------------------------------------------------------------------------------- |
+| `npm run dev`             | Start Vite dev server                                                           |
+| `npm run build`           | Alias for `build:web`                                                           |
+| `npm run icons`           | Regenerate PWA PNG icons from `favicon.svg`                                     |
+| `npm run build:web`       | Typecheck (`tsc -b`) then Vite production build (pre-step runs icon generation) |
+| `npm run build:extension` | Typecheck then extension bundle to `dist-extension/`                            |
+| `npm run build:all`       | `build:web` then `build:extension`                                              |
+| `npm run preview`         | Preview the web production build                                                |
+| `npm run lint`            | ESLint with zero warnings allowed                                               |
+| `npm run lint:fix`        | ESLint with auto-fix                                                            |
+| `npm run format`          | Prettier write                                                                  |
+| `npm run format:check`    | Prettier check only                                                             |
+| `npm test`                | Jest with coverage                                                              |
+| `npm run validate`        | Sample OpenAPI validation helper script                                         |
 
 ---
 
 ## Tool catalog
 
-All tools are registered in `src/common/constants.ts` (`TOOLS`) and mounted from `src/App.tsx`. **22** tools are listed below (id matches the route query parameter in the Chrome extension build and the `/tools/:id` path on the web).
+All tools are registered in `src/common/constants.ts` (`TOOLS`) and mounted from `src/App.tsx`. **22** tools are listed below. The **id** matches the route query parameter in the Chrome extension build (`?tool=`) and the **`/tools/:id`** path on the web.
+
+**Route alias:** `node-mapper` redirects to `json-diagram-workflow` (see `TOOL_ROUTE_ALIASES` in `src/lib/appToolRoutes.ts`).
 
 | Id                           | Name (as shown in UI)                                       | Category                  |
 | ---------------------------- | ----------------------------------------------------------- | ------------------------- |
 | `json-diff-tool`             | JavaScript Object Notation (JSON) diff (fixed left / right) | Developer Essentials      |
 | `encoding-utils`             | Base64 + JSON Web Token (JWT) decode                        | Developer Essentials      |
-| `json-diagram-workflow`      | JavaScript Object Notation (JSON) diagram & workflow        | Diagrams & Modeling       |
+| `json-diagram-workflow`      | JSON Diagram & Workflow                                     | Diagrams & Modeling       |
 | `url-toolkit`                | Uniform Resource Locator (URL) toolkit                      | Developer Essentials      |
 | `unix-time-converter`        | Unix time converter                                         | Developer Essentials      |
 | `regex-playground`           | Regular expression (RegExp) playground                      | Developer Essentials      |
@@ -231,6 +309,12 @@ mindmap
 
 ---
 
+## Tool transparency
+
+Each tool definition includes a **transparency** block: a short summary of how the tool works and a list of **domain-relevant npm packages** (not the entire app shell). On tool pages, the **Transparency** section reflects that data so you can see, at a glance, whether a screen is **browser APIs only** or uses libraries such as **Swagger UI**, **Mermaid**, or **React Flow** (`@xyflow/react`). Copy for this feature lives in `BRAND` and `ToolTransparency` types in `src/common/constants.ts`; UI is implemented in `src/components/ToolTransparency.tsx`.
+
+---
+
 ## Architecture
 
 ### High-level runtime
@@ -267,15 +351,41 @@ sequenceDiagram
 ### Continuous integration and deployment
 
 ```mermaid
-flowchart LR
-  Push[Push or PR] --> GHA[GitHub Actions]
-  GHA --> Lint[Lint]
-  GHA --> Test[Test]
-  GHA --> BuildWeb[build:web]
-  GHA --> BuildExt[build:extension]
-  PushMain[Push to main] --> Deploy[deploy.yml]
-  Deploy --> Pages[GitHub Pages artifact]
+flowchart TB
+  subgraph triggers [Triggers]
+    PR[Pull request to main]
+    Push[Push to main or develop]
+    Release[GitHub Release published]
+  end
+  subgraph ci [CI workflow]
+    Lint[ESLint]
+    Fmt[Prettier check]
+    Test[Jest]
+    Build[build:web and build:extension]
+    Zip[Zip dist-extension artifact]
+    Val[Validate sample OpenAPI]
+  end
+  subgraph pages [GitHub Pages]
+    Deploy[deploy.yml on push main]
+    Site[Static site from dist]
+  end
+  subgraph extrel [Extension release]
+    RelZip[release-extension.yml attaches zip]
+  end
+  PR --> ci
+  Push --> ci
+  Push --> Deploy
+  Deploy --> Site
+  Release --> RelZip
+  ci --> Lint
+  ci --> Fmt
+  ci --> Test
+  ci --> Build
+  ci --> Zip
+  ci --> Val
 ```
+
+**Workflow files:** `ci.yml` (lint, format, test, build, extension zip artifact, OpenAPI validation), `pr-check.yml` (PR-focused checks), `deploy.yml` (GitHub Pages), `release-extension.yml` (release asset).
 
 ---
 
@@ -309,6 +419,7 @@ flowchart TB
 | OpenAPI UI                  | `swagger-ui-react`, `js-yaml`                         |
 | JWT decode (inspector tool) | `jwt-decode`                                          |
 | Tokenizer                   | `gpt-tokenizer`                                       |
+| Diagrams                    | `@xyflow/react`, `mermaid`                            |
 | Quality                     | ESLint 9, Prettier, Jest, Testing Library             |
 
 ---
@@ -331,15 +442,16 @@ Requires a modern **ECMAScript** environment (ES2022 class fields and standard W
 ```
 garry-micro-dev-utilities/
 ├── extension/                 # Chrome MV3 manifest (copied into dist-extension)
-├── public/                    # Static assets (favicon, robots.txt)
+├── public/                    # Static assets (favicon, PWA icons, robots.txt)
 ├── samples/                   # Example OpenAPI YAML
-├── scripts/                   # validate-openapi.js, extension-scope.json
+├── scripts/                   # validate-openapi.js, extension-scope.json, generate-pwa-icons.mjs
 ├── src/
 │   ├── App.tsx                # Library + tool routing
 │   ├── main.tsx               # Web entry (PWA registration)
 │   ├── extension-main.tsx     # Extension entry (no service worker)
 │   ├── components/tools/      # One folder per tool
 │   ├── components/ui/         # Shared UI primitives
+│   ├── components/ToolTransparency.tsx
 │   ├── common/constants.ts    # TOOLS definitions and BRAND copy
 │   ├── config/distribution.ts # PWA vs extension vs mobile notes
 │   ├── lib/                   # Routing, search, OpenAPI helpers
@@ -348,7 +460,7 @@ garry-micro-dev-utilities/
 ├── vite.config.ts             # Web + PWA
 ├── vite.extension.config.ts   # Extension bundle
 ├── full.html                  # Extension HTML entry
-└── .github/workflows/         # ci.yml, pr-check.yml, deploy.yml
+└── .github/workflows/         # ci.yml, pr-check.yml, deploy.yml, release-extension.yml
 ```
 
 ---
@@ -371,7 +483,7 @@ garry-micro-dev-utilities/
 ### Adding a tool
 
 1. Add a component under `src/components/tools/`.
-2. Append a `ToolDefinition` to `TOOLS` in `src/common/constants.ts`.
+2. Append a `ToolDefinition` (including `transparency`) to `TOOLS` in `src/common/constants.ts`.
 3. Register the component in `TOOL_COMPONENTS` in `src/App.tsx`.
 4. Run `npm run lint` and `npm run build:all`.
 5. Update **this README** tool table and any focused docs if needed.
