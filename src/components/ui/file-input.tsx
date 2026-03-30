@@ -29,9 +29,7 @@ function FileInput({ className, label, onFileChange, onChange, ...props }: FileI
 
   return (
     <div className={cn('space-y-2', className)}>
-      {label && (
-        <label className="text-sm font-medium text-foreground">{label}</label>
-      )}
+      {label && <label className="text-sm font-medium text-foreground">{label}</label>}
       <div className="flex gap-2 items-center">
         <input
           ref={fileInputRef}

@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "host_permissions": [],
+  "permissions": [],
+  "rationale": "No host_permissions: tools run entirely in the extension page; any future feature that performs background fetches to arbitrary URLs would need an explicit host permission and review.",
+  "mobile_install": {
+    "strategy": "pwa",
+    "reference": "src/config/distribution.ts",
+    "note": "Chrome extensions are not used for Android/iOS install; the PWA manifest and Add to Home Screen apply to the deployed web URL."
+  },
+  "tools": {
+    "classification": "ui_only_local_processing",
+    "details": "All current tools operate on pasted text, uploaded files, or generated snippets in-page. No tool performs automatic cross-origin network access from the extension background. Curl Visualizer and similar only emit code strings; they do not execute fetch to user URLs without separate manifest permissions if added later."
+  }
+}

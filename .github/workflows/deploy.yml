@@ -29,18 +29,35 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Type-check
-        run: npx tsc -b
-
-      - name: Build
+      - name: Build (web / PWA for GitHub Pages)
         env:
           GITHUB_PAGES: 'true'
-        run: npx vite build
+        run: npm run build:web
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
+
+  chrome-extension:
+    name: Chrome extension (CI artifact)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build:extension
+      - name: Zip Chrome extension (manifest at zip root)
+        run: (cd dist-extension && zip -r ../chrome-extension.zip .)
+      - name: Upload Chrome extension artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: chrome-extension
+          path: chrome-extension.zip
+          retention-days: 90
 
   deploy:
     name: Deploy

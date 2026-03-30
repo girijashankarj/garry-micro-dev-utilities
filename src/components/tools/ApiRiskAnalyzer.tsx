@@ -1,8 +1,6 @@
 import { useState, useCallback } from 'react';
 import * as yaml from 'js-yaml';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Textarea } from '@/components/ui/textarea';
 import { FileInput } from '@/components/ui/file-input';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
@@ -13,61 +11,55 @@ interface Risk {
   path?: string;
 }
 
+function isRecord(x: unknown): x is Record<string, unknown> {
+  return typeof x === 'object' && x !== null;
+}
+
 export function ApiRiskAnalyzer() {
-  const [spec, setSpec] = useState<any>(null);
+  const [spec, setSpec] = useState<unknown>(null);
   const [risks, setRisks] = useState<Risk[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  const handleFileUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      try {
-        const content = event.target?.result as string;
-        const parsed = file.name.endsWith('.yaml') || file.name.endsWith('.yml')
-          ? yaml.load(content)
-          : JSON.parse(content);
-        setSpec(parsed);
-        setError(null);
-        analyzeSpec(parsed);
-        toast.success('OpenAPI spec loaded');
-      } catch (err) {
-        setError('Failed to parse file');
-        toast.error('Failed to parse OpenAPI spec');
-      }
-    };
-    reader.readAsText(file);
-  }, []);
-
-  const analyzeSpec = useCallback((spec: any) => {
+  const analyzeSpec = useCallback((raw: unknown) => {
     const foundRisks: Risk[] = [];
 
-    if (!spec.paths) {
+    if (!isRecord(raw) || !raw.paths) {
       foundRisks.push({ type: 'error', message: 'No paths defined in OpenAPI spec' });
       setRisks(foundRisks);
       return;
     }
 
-    Object.entries(spec.paths).forEach(([path, pathItem]: [string, any]) => {
-      Object.entries(pathItem).forEach(([method, operation]: [string, any]) => {
-        if (['get', 'post', 'put', 'patch', 'delete'].includes(method.toLowerCase())) {
-          // Check for missing error responses
-          if (!operation.responses || !operation.responses['4xx'] && !operation.responses['5xx']) {
-            foundRisks.push({
-              type: 'warning',
-              message: `Missing error responses (4xx/5xx) for ${method.toUpperCase()} ${path}`,
-              path: `${method.toUpperCase()} ${path}`,
-            });
-          }
+    const paths = raw.paths;
+    if (!isRecord(paths)) {
+      foundRisks.push({ type: 'error', message: 'Invalid paths in OpenAPI spec' });
+      setRisks(foundRisks);
+      return;
+    }
 
-          // Check for weak validation
-          if (operation.requestBody) {
-            const content = operation.requestBody.content;
-            if (content && content['application/json']) {
-              const schema = content['application/json'].schema;
-              if (schema && !schema.required && !schema.properties) {
+    Object.entries(paths).forEach(([path, pathItem]) => {
+      if (!isRecord(pathItem)) return;
+      Object.entries(pathItem).forEach(([method, operation]) => {
+        if (!['get', 'post', 'put', 'patch', 'delete'].includes(method.toLowerCase())) return;
+        if (!isRecord(operation)) return;
+
+        const responses = operation.responses;
+        const respRec = isRecord(responses) ? responses : null;
+        if (!respRec || (!respRec['4xx'] && !respRec['5xx'] && !respRec['default'])) {
+          foundRisks.push({
+            type: 'warning',
+            message: `Missing error responses (4xx/5xx) for ${method.toUpperCase()} ${path}`,
+            path: `${method.toUpperCase()} ${path}`,
+          });
+        }
+
+        const requestBody = operation.requestBody;
+        if (isRecord(requestBody)) {
+          const content = requestBody.content;
+          if (isRecord(content)) {
+            const json = content['application/json'];
+            if (isRecord(json)) {
+              const schema = json.schema;
+              if (isRecord(schema) && !schema.required && !schema.properties) {
                 foundRisks.push({
                   type: 'warning',
                   message: `Weak validation for request body in ${method.toUpperCase()} ${path}`,
@@ -83,20 +75,45 @@ export function ApiRiskAnalyzer() {
     setRisks(foundRisks);
   }, []);
 
+  const handleFileUpload = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const content = event.target?.result as string;
+          const parsed =
+            file.name.endsWith('.yaml') || file.name.endsWith('.yml')
+              ? yaml.load(content)
+              : JSON.parse(content);
+          setSpec(parsed);
+          setError(null);
+          analyzeSpec(parsed);
+          toast.success('OpenAPI spec loaded');
+        } catch {
+          setError('Failed to parse file');
+          toast.error('Failed to parse OpenAPI spec');
+        }
+      };
+      reader.readAsText(file);
+    },
+    [analyzeSpec]
+  );
+
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>API Contract Risk Analyzer</CardTitle>
+          <CardTitle>API contract risk analyzer (OpenAPI)</CardTitle>
           <CardDescription>
-            Analyze OpenAPI specs for missing error responses, weak validation, and breaking change risks
+            Analyze OpenAPI specs for missing error responses, weak validation, and breaking change
+            risks
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <FileInput
-            accept=".yaml,.yml,.json"
-            onChange={handleFileUpload}
-          />
+          <FileInput accept=".yaml,.yml,.json" onChange={handleFileUpload} />
           {error && (
             <div className="p-3 bg-destructive/10 text-destructive rounded-md text-sm">{error}</div>
           )}
@@ -146,10 +163,10 @@ export function ApiRiskAnalyzer() {
         </Card>
       )}
 
-      {spec && risks.length === 0 && (
+      {spec != null && risks.length === 0 && (
         <Card>
           <CardContent className="py-8 text-center text-muted-foreground">
-            No risks found. Your API spec looks good! ✅
+            No risks found. Your application programming interface (API) specification looks good.
           </CardContent>
         </Card>
       )}

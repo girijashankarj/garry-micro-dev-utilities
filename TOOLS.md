@@ -9,9 +9,11 @@ This document provides detailed specifications for each tool in the platform.
 **File**: Embedded in `index.html` (tool section: `tool-openapi-viewer`)
 
 ### Purpose
+
 Upload OpenAPI YAML/JSON files and render interactive API documentation using Swagger UI.
 
 ### Features
+
 - Upload `.yaml`, `.yml`, or `.json` files
 - Load sample API spec
 - Interactive API documentation
@@ -20,11 +22,13 @@ Upload OpenAPI YAML/JSON files and render interactive API documentation using Sw
 - OpenAPI 3.x validation
 
 ### Dependencies
+
 - Swagger UI 5.17.14 (CDN)
 - js-yaml 4.1.0 (CDN)
 - Tailwind CSS 3.4.1 (CDN)
 
 ### Usage
+
 1. Click "Choose file" to upload OpenAPI spec
 2. Or click "Load Sample" to see example
 3. View rendered API documentation
@@ -39,9 +43,11 @@ Upload OpenAPI YAML/JSON files and render interactive API documentation using Sw
 **File**: `tools/jwt-inspector.html`
 
 ### Purpose
+
 Decode and inspect JWT tokens offline. View header, payload, expiration details, and highlight potential security issues.
 
 ### Planned Features
+
 - Paste JWT token
 - Decode header (base64)
 - Decode payload (base64)
@@ -50,10 +56,12 @@ Decode and inspect JWT tokens offline. View header, payload, expiration details,
 - No secret validation (offline only)
 
 ### Dependencies
+
 - jsonwebtoken library (CDN) or custom decoder
 - Tailwind CSS 3.4.1 (CDN)
 
 ### Usage (Planned)
+
 1. Paste JWT token
 2. View decoded header and payload
 3. Check expiration status
@@ -68,9 +76,11 @@ Decode and inspect JWT tokens offline. View header, payload, expiration details,
 **File**: `tools/api-response-diff.html`
 
 ### Purpose
+
 Compare two JSON API responses and highlight semantic differences. Flag breaking changes and schema modifications.
 
 ### Planned Features
+
 - Paste two JSON responses
 - Semantic diff highlighting
 - Breaking change detection
@@ -78,10 +88,12 @@ Compare two JSON API responses and highlight semantic differences. Flag breaking
 - Side-by-side view
 
 ### Dependencies
+
 - JSON diff library (CDN)
 - Tailwind CSS 3.4.1 (CDN)
 
 ### Usage (Planned)
+
 1. Paste first JSON response
 2. Paste second JSON response
 3. View highlighted differences
@@ -96,9 +108,11 @@ Compare two JSON API responses and highlight semantic differences. Flag breaking
 **File**: `tools/json-formatter.html`
 
 ### Purpose
+
 Format and validate JSON/YAML files. Auto-format, show syntax errors, and copy formatted output.
 
 ### Planned Features
+
 - Upload or paste JSON/YAML
 - Auto-format with indentation
 - Syntax error highlighting
@@ -107,11 +121,13 @@ Format and validate JSON/YAML files. Auto-format, show syntax errors, and copy f
 - Convert between JSON/YAML
 
 ### Dependencies
+
 - js-yaml 4.1.0 (CDN)
 - JSON parser (native)
 - Tailwind CSS 3.4.1 (CDN)
 
 ### Usage (Planned)
+
 1. Upload file or paste content
 2. View formatted output
 3. Fix syntax errors if any
@@ -126,9 +142,11 @@ Format and validate JSON/YAML files. Auto-format, show syntax errors, and copy f
 **File**: `tools/curl-visualizer.html`
 
 ### Purpose
+
 Paste a curl command and visualize headers, parameters, body. Convert to Fetch or Axios code.
 
 ### Planned Features
+
 - Parse curl command
 - Visualize request components
 - Convert to Fetch API
@@ -136,10 +154,12 @@ Paste a curl command and visualize headers, parameters, body. Convert to Fetch o
 - Export as code snippet
 
 ### Dependencies
+
 - curl parser library (CDN)
 - Tailwind CSS 3.4.1 (CDN)
 
 ### Usage (Planned)
+
 1. Paste curl command
 2. View parsed components
 3. Select output format (Fetch/Axios)
@@ -154,9 +174,11 @@ Paste a curl command and visualize headers, parameters, body. Convert to Fetch o
 **File**: `tools/csv-explorer.html`
 
 ### Purpose
+
 Upload CSV files, render as table, apply simple filters, and export to JSON.
 
 ### Planned Features
+
 - Upload CSV file
 - Render as sortable table
 - Simple column filters
@@ -165,10 +187,12 @@ Upload CSV files, render as table, apply simple filters, and export to JSON.
 - Export filtered results
 
 ### Dependencies
+
 - PapaParse or similar CSV parser (CDN)
 - Tailwind CSS 3.4.1 (CDN)
 
 ### Usage (Planned)
+
 1. Upload CSV file
 2. View table preview
 3. Apply filters if needed
@@ -183,9 +207,11 @@ Upload CSV files, render as table, apply simple filters, and export to JSON.
 **File**: `tools/sql-explainer.html`
 
 ### Purpose
+
 Paste SQL queries and get explanations of joins, filters, and potential risks. No database execution.
 
 ### Planned Features
+
 - Parse SQL query
 - Explain joins and relationships
 - Highlight filter conditions
@@ -194,10 +220,12 @@ Paste SQL queries and get explanations of joins, filters, and potential risks. N
 - No actual execution
 
 ### Dependencies
+
 - SQL parser library (CDN)
 - Tailwind CSS 3.4.1 (CDN)
 
 ### Usage (Planned)
+
 1. Paste SQL query
 2. View query explanation
 3. Review join analysis
@@ -212,9 +240,11 @@ Paste SQL queries and get explanations of joins, filters, and potential risks. N
 **File**: `tools/api-risk-analyzer.html`
 
 ### Purpose
+
 Upload OpenAPI spec and flag missing error responses, weak validation, and breaking change risks.
 
 ### Planned Features
+
 - Upload OpenAPI spec
 - Analyze error response coverage
 - Check validation rules
@@ -223,10 +253,12 @@ Upload OpenAPI spec and flag missing error responses, weak validation, and break
 - Suggest improvements
 
 ### Dependencies
+
 - OpenAPI parser (CDN)
 - Tailwind CSS 3.4.1 (CDN)
 
 ### Usage (Planned)
+
 1. Upload OpenAPI spec
 2. Run analysis
 3. Review risk report

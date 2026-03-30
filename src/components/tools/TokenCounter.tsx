@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo, useEffect, type ReactElement } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { FileInput } from '@/components/ui/file-input';
@@ -14,7 +14,7 @@ let tokenizerError: string | null = null;
 
 async function loadTokenizer() {
   if (tokenizerLoaded) return;
-  
+
   try {
     const tokenizer = await import('gpt-tokenizer/encoding/cl100k_base');
     encodeFn = tokenizer.encode;
@@ -46,7 +46,9 @@ export function TokenCounter() {
     loadTokenizer().then(() => {
       setIsLoading(false);
       if (tokenizerError) {
-        toast.error(`Tokenizer not available: ${tokenizerError}. Please run 'npm install' to install gpt-tokenizer.`);
+        toast.error(
+          `Tokenizer not available: ${tokenizerError}. Please run 'npm install' to install gpt-tokenizer.`
+        );
       }
     });
   }, []);
@@ -54,7 +56,9 @@ export function TokenCounter() {
   const countTokens = useCallback((text: string) => {
     if (!encodeFn || !decodeFn) {
       if (tokenizerError) {
-        toast.error('Tokenizer not loaded. Please install gpt-tokenizer: npm install');
+        toast.error(
+          'Tokenizer not loaded. Please install gpt-tokenizer: npm (Node Package Manager) install'
+        );
       } else {
         toast.error('Tokenizer is still loading...');
       }
@@ -65,20 +69,20 @@ export function TokenCounter() {
       // Use cl100k_base encoding (used by GPT-4, GPT-3.5-turbo, etc.)
       const tokens = encodeFn(text);
       setTokenCount(tokens.length);
-      
+
       // Create token segments by matching decoded tokens to original text
       // Decode all tokens and reconstruct to find accurate positions
       const segments: TokenSegment[] = [];
       let currentPos = 0;
-      
+
       for (let i = 0; i < tokens.length; i++) {
         const token = tokens[i];
         const decodedToken = decodeFn([token]);
-        
+
         // Find the decoded token in the remaining text
         const searchStart = currentPos;
         const foundIndex = text.indexOf(decodedToken, searchStart);
-        
+
         if (foundIndex !== -1 && foundIndex >= currentPos) {
           // Found exact match
           segments.push({
@@ -106,7 +110,7 @@ export function TokenCounter() {
               break;
             }
           }
-          
+
           if (!matched) {
             // Last resort: use approximate position
             segments.push({
@@ -119,7 +123,7 @@ export function TokenCounter() {
           }
         }
       }
-      
+
       setTokenSegments(segments);
     } catch (err) {
       console.error('Token counting error:', err);
@@ -129,56 +133,62 @@ export function TokenCounter() {
     }
   }, []);
 
-  const handleFileUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleFileUpload = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
 
-    const fileExtension = file.name.split('.').pop()?.toLowerCase() || '';
-    const mimeType = file.type || '';
-    
-    // Determine file type
-    let detectedType = 'Unknown';
-    if (fileExtension === 'json' || mimeType.includes('json')) {
-      detectedType = 'JSON';
-    } else if (fileExtension === 'csv' || mimeType.includes('csv')) {
-      detectedType = 'CSV';
-    } else if (fileExtension === 'yaml' || fileExtension === 'yml' || mimeType.includes('yaml')) {
-      detectedType = 'YAML';
-    } else if (fileExtension === 'txt' || mimeType.includes('text')) {
-      detectedType = 'Text';
-    } else if (fileExtension === 'md' || mimeType.includes('markdown')) {
-      detectedType = 'Markdown';
-    } else if (['js', 'ts', 'tsx', 'jsx'].includes(fileExtension)) {
-      detectedType = 'Code';
-    } else if (['py', 'java', 'cpp', 'c'].includes(fileExtension)) {
-      detectedType = 'Code';
-    } else if (['html', 'css'].includes(fileExtension)) {
-      detectedType = 'Code';
-    } else {
-      detectedType = fileExtension.toUpperCase() || 'Unknown';
-    }
+      const fileExtension = file.name.split('.').pop()?.toLowerCase() || '';
+      const mimeType = file.type || '';
 
-    setFileType(`${detectedType} (${file.name}, ${(file.size / 1024).toFixed(2)} KB)`);
+      // Determine file type
+      let detectedType = 'Unknown';
+      if (fileExtension === 'json' || mimeType.includes('json')) {
+        detectedType = 'JSON';
+      } else if (fileExtension === 'csv' || mimeType.includes('csv')) {
+        detectedType = 'CSV';
+      } else if (fileExtension === 'yaml' || fileExtension === 'yml' || mimeType.includes('yaml')) {
+        detectedType = 'YAML';
+      } else if (fileExtension === 'txt' || mimeType.includes('text')) {
+        detectedType = 'Text';
+      } else if (fileExtension === 'md' || mimeType.includes('markdown')) {
+        detectedType = 'Markdown';
+      } else if (['js', 'ts', 'tsx', 'jsx'].includes(fileExtension)) {
+        detectedType = 'Code';
+      } else if (['py', 'java', 'cpp', 'c'].includes(fileExtension)) {
+        detectedType = 'Code';
+      } else if (['html', 'css'].includes(fileExtension)) {
+        detectedType = 'Code';
+      } else {
+        detectedType = fileExtension.toUpperCase() || 'Unknown';
+      }
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const text = event.target?.result as string;
+      setFileType(`${detectedType} (${file.name}, ${(file.size / 1024).toFixed(2)} KB)`);
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const text = event.target?.result as string;
+        setContent(text);
+        countTokens(text);
+        toast.success('File loaded successfully');
+      };
+      reader.readAsText(file);
+    },
+    [countTokens]
+  );
+
+  const handleTextChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      const text = e.target.value;
       setContent(text);
-      countTokens(text);
-      toast.success('File loaded successfully');
-    };
-    reader.readAsText(file);
-  }, [countTokens]);
-
-  const handleTextChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const text = e.target.value;
-    setContent(text);
-    if (text.trim()) {
-      countTokens(text);
-    } else {
-      setTokenCount(null);
-    }
-  }, [countTokens]);
+      if (text.trim()) {
+        countTokens(text);
+      } else {
+        setTokenCount(null);
+      }
+    },
+    [countTokens]
+  );
 
   const handleClear = useCallback(() => {
     setContent('');
@@ -206,7 +216,7 @@ export function TokenCounter() {
   const renderTokenizedText = useMemo(() => {
     if (!content || tokenSegments.length === 0) return null;
 
-    const elements: JSX.Element[] = [];
+    const elements: ReactElement[] = [];
     let lastIndex = 0;
 
     // Sort segments by startIndex to ensure correct order
@@ -226,7 +236,7 @@ export function TokenCounter() {
         segment.startIndex,
         Math.min(segment.endIndex, content.length)
       );
-      
+
       if (tokenText) {
         elements.push(
           <span
@@ -255,11 +265,12 @@ export function TokenCounter() {
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
-            <CardTitle>Token Counter</CardTitle>
-            <InfoTooltip content="Counts tokens using GPT-4's cl100k_base encoding. Useful for estimating API costs and ensuring prompts fit within model limits. Supports text files, code files, and direct text input." />
+            <CardTitle>Token counter</CardTitle>
+            <InfoTooltip content="Counts tokens using OpenAI-compatible cl100k_base encoding (used by many large language models). Useful for estimating application programming interface (API) costs and prompt limits. Supports text files, code files, and direct text input." />
           </div>
           <CardDescription>
-            Count tokens in text or files. Useful for LLM prompt optimization and cost estimation.
+            Count tokens in text or files — useful for large language model (LLM) prompt sizing and
+            cost estimation.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -270,7 +281,9 @@ export function TokenCounter() {
           )}
           {tokenizerError && (
             <div className="p-3 bg-red-500/10 text-red-600 dark:text-red-400 rounded-md text-sm">
-              <strong>Error:</strong> {tokenizerError}. Please run <code className="bg-muted px-1 rounded">npm install</code> to install gpt-tokenizer.
+              <strong>Error:</strong> {tokenizerError}. Please run{' '}
+              <code className="bg-muted px-1 rounded">npm install</code> (Node Package Manager) to
+              install gpt-tokenizer.
             </div>
           )}
           <div className="space-y-2">
@@ -317,13 +330,15 @@ export function TokenCounter() {
             <CardHeader>
               <div className="flex items-center gap-2">
                 <CardTitle className="text-base">Token Count</CardTitle>
-                <InfoTooltip content="Total number of tokens in your text. Also shows character and word counts for reference. Token count is what matters for API pricing and model limits." />
+                <InfoTooltip content="Total number of tokens in your text. Also shows character and word counts for reference. Token count is what matters for application programming interface (API) pricing and model limits." />
               </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="text-center p-4 bg-muted rounded-lg">
-                  <div className="text-3xl font-bold text-primary mb-1">{tokenCount.toLocaleString()}</div>
+                  <div className="text-3xl font-bold text-primary mb-1">
+                    {tokenCount.toLocaleString()}
+                  </div>
                   <div className="text-xs text-muted-foreground">tokens</div>
                 </div>
                 <div className="space-y-2 text-xs">
@@ -339,7 +354,8 @@ export function TokenCounter() {
                   </div>
                 </div>
                 <div className="p-2 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-md text-xs">
-                  <strong>Note:</strong> Uses GPT tokenizer (cl100k_base encoding).
+                  <strong>Note:</strong> Uses a Generative Pre-trained Transformer (GPT)-family
+                  tokenizer (cl100k_base encoding).
                 </div>
               </div>
             </CardContent>
@@ -349,11 +365,11 @@ export function TokenCounter() {
             <CardHeader>
               <div className="flex items-center gap-2">
                 <CardTitle>Token Visualization</CardTitle>
-                <InfoTooltip content="Each colored segment represents one token. Colors cycle through 8 hues. Hover over any segment to see its token number and decoded text. This helps you understand how GPT models break down your text." />
+                <InfoTooltip content="Each colored segment represents one token. Colors cycle through 8 hues. Hover over any segment to see its token number and decoded text. This helps you understand how large language models (LLMs) break down your text." />
               </div>
               <CardDescription>
-                Colored segments show how the text is tokenized. Each color represents a different token.
-                Hover over segments to see token numbers and decoded text.
+                Colored segments show how the text is tokenized. Each color represents a different
+                token. Hover over segments to see token numbers and decoded text.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -378,8 +394,9 @@ export function TokenCounter() {
                   )}
                 </div>
                 <div className="text-xs text-muted-foreground pt-2 border-t">
-                  <strong>Tip:</strong> Colors cycle through 8 different hues. Each highlighted segment represents
-                  one token. Hover over segments to see detailed token information.
+                  <strong>Tip:</strong> Colors cycle through 8 different hues. Each highlighted
+                  segment represents one token. Hover over segments to see detailed token
+                  information.
                 </div>
               </div>
             </CardContent>
@@ -395,7 +412,9 @@ export function TokenCounter() {
           <CardContent>
             <div className="space-y-4">
               <div className="text-center p-6 bg-muted rounded-lg">
-                <div className="text-4xl font-bold text-primary mb-2">{tokenCount.toLocaleString()}</div>
+                <div className="text-4xl font-bold text-primary mb-2">
+                  {tokenCount.toLocaleString()}
+                </div>
                 <div className="text-sm text-muted-foreground">tokens</div>
               </div>
               <div className="grid grid-cols-2 gap-4 text-sm">
@@ -411,8 +430,9 @@ export function TokenCounter() {
                 </div>
               </div>
               <div className="p-3 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-md text-sm">
-                <strong>Note:</strong> Token count uses GPT tokenizer (cl100k_base encoding). Actual token
-                count may vary slightly between different models.
+                <strong>Note:</strong> Token count uses a Generative Pre-trained Transformer
+                (GPT)-family tokenizer (cl100k_base encoding). Actual token count may vary slightly
+                between different models.
               </div>
             </div>
           </CardContent>

@@ -3,8 +3,13 @@ import * as yaml from 'js-yaml';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { toast } from 'sonner';
 
 type Format = 'json' | 'yaml';
@@ -23,7 +28,7 @@ export function JsonYamlFormatter() {
     }
 
     try {
-      let parsed: any;
+      let parsed: unknown;
 
       // Parse input
       if (inputFormat === 'json') {
@@ -56,7 +61,7 @@ export function JsonYamlFormatter() {
     }
 
     try {
-      let parsed: any;
+      let parsed: unknown;
 
       if (inputFormat === 'json') {
         parsed = JSON.parse(input);
@@ -83,7 +88,7 @@ export function JsonYamlFormatter() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>JSON / YAML Formatter</CardTitle>
+          <CardTitle>JavaScript Object Notation (JSON) / YAML formatter</CardTitle>
           <CardDescription>
             Format, validate, minify JSON/YAML. Convert between formats. Copy formatted output
           </CardDescription>
@@ -142,9 +147,7 @@ export function JsonYamlFormatter() {
             </div>
           </CardHeader>
           <CardContent>
-            <pre className="bg-muted p-4 rounded-md overflow-auto text-sm font-mono">
-              {output}
-            </pre>
+            <pre className="bg-muted p-4 rounded-md overflow-auto text-sm font-mono">{output}</pre>
           </CardContent>
         </Card>
       )}

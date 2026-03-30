@@ -28,6 +28,7 @@ garry-micro-dev-utilities/
 ### Shared Design System
 
 All tools share:
+
 - **Color Palette**: LinkedIn-inspired blue (#0A66C2) with light backgrounds
 - **Typography**: Clean, readable fonts via Tailwind
 - **Layout**: Consistent header with "Back to Home" link
@@ -55,6 +56,7 @@ Each tool is a section within `index.html`:
 ## Tool Categories
 
 ### API & Backend
+
 - OpenAPI Swagger Viewer ✅
 - JWT Inspector
 - API Response Diff
@@ -62,10 +64,12 @@ Each tool is a section within `index.html`:
 - API Contract Risk Analyzer
 
 ### Data & Formats
+
 - JSON / YAML Formatter
 - CSV Explorer
 
 ### Debugging & Security
+
 - SQL Query Explainer
 
 ## Technical Stack
@@ -117,6 +121,7 @@ Requires ES6+ support.
 **Deployed on GitHub Pages**
 
 The project uses GitHub Actions for automatic deployment:
+
 - Push to `main` branch triggers deployment
 - No build step required
 - Static files served directly

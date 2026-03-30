@@ -8,9 +8,11 @@ import { toast } from 'sonner';
 export function ApiResponseDiff() {
   const [response1, setResponse1] = useState('');
   const [response2, setResponse2] = useState('');
-  const [diff, setDiff] = useState<{ added: string[]; removed: string[]; modified: string[] } | null>(
-    null
-  );
+  const [diff, setDiff] = useState<{
+    added: string[];
+    removed: string[];
+    modified: string[];
+  } | null>(null);
 
   const compare = useCallback(() => {
     if (!response1.trim() || !response2.trim()) {
@@ -26,17 +28,32 @@ export function ApiResponseDiff() {
       const removed: string[] = [];
       const modified: string[] = [];
 
-      const compareObjects = (obj1: any, obj2: any, path = '') => {
-        const keys1 = Object.keys(obj1);
-        const keys2 = Object.keys(obj2);
+      const compareObjects = (obj1: unknown, obj2: unknown, path = '') => {
+        if (
+          typeof obj1 !== 'object' ||
+          obj1 === null ||
+          typeof obj2 !== 'object' ||
+          obj2 === null
+        ) {
+          return;
+        }
+        const o1 = obj1 as Record<string, unknown>;
+        const o2 = obj2 as Record<string, unknown>;
+        const keys1 = Object.keys(o1);
+        const keys2 = Object.keys(o2);
 
         keys1.forEach((key) => {
           const currentPath = path ? `${path}.${key}` : key;
-          if (!(key in obj2)) {
+          if (!(key in o2)) {
             removed.push(currentPath);
-          } else if (JSON.stringify(obj1[key]) !== JSON.stringify(obj2[key])) {
-            if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object' && obj1[key] !== null && obj2[key] !== null) {
-              compareObjects(obj1[key], obj2[key], currentPath);
+          } else if (JSON.stringify(o1[key]) !== JSON.stringify(o2[key])) {
+            if (
+              typeof o1[key] === 'object' &&
+              typeof o2[key] === 'object' &&
+              o1[key] !== null &&
+              o2[key] !== null
+            ) {
+              compareObjects(o1[key], o2[key], currentPath);
             } else {
               modified.push(currentPath);
             }
@@ -45,7 +62,7 @@ export function ApiResponseDiff() {
 
         keys2.forEach((key) => {
           const currentPath = path ? `${path}.${key}` : key;
-          if (!(key in obj1)) {
+          if (!(key in o1)) {
             added.push(currentPath);
           }
         });
@@ -55,7 +72,7 @@ export function ApiResponseDiff() {
 
       setDiff({ added, removed, modified });
       toast.success('Comparison complete');
-    } catch (err) {
+    } catch {
       toast.error('Failed to parse JSON responses');
       setDiff(null);
     }
@@ -65,9 +82,10 @@ export function ApiResponseDiff() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>API Response Diff</CardTitle>
+          <CardTitle>Application programming interface (API) response diff</CardTitle>
           <CardDescription>
-            Compare two JSON API responses and highlight semantic differences and breaking changes
+            Compare two JSON (JavaScript Object Notation) API responses and highlight semantic
+            differences and breaking changes
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -146,9 +164,7 @@ export function ApiResponseDiff() {
               </div>
             )}
             {diff.added.length === 0 && diff.removed.length === 0 && diff.modified.length === 0 && (
-              <div className="text-center text-muted-foreground py-4">
-                No differences found
-              </div>
+              <div className="text-center text-muted-foreground py-4">No differences found</div>
             )}
           </CardContent>
         </Card>

@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Garry Micro Dev Utilities",
+  "version": "1.0.0",
+  "description": "Local-first browser utilities for JSON, APIs, data, and planning. Same tools as the web app, packaged for Chrome.",
+  "action": {
+    "default_title": "Garry Micro Dev Utilities",
+    "default_popup": "full.html"
+  },
+  "icons": {
+    "128": "favicon.svg"
+  }
+}

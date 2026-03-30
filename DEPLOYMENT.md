@@ -28,6 +28,7 @@ This guide provides detailed instructions for deploying Garry Micro Dev Utilitie
 The repository includes a GitHub Actions workflow (`.github/workflows/deploy.yml`) that automatically deploys when you push to `main`.
 
 Once Pages is enabled, the workflow will:
+
 - Build the site
 - Deploy to GitHub Pages
 - Make it available at `https://girijashankarj.github.io/garry-micro-dev-utilities/`
@@ -35,6 +36,7 @@ Once Pages is enabled, the workflow will:
 ### Step 3: Deploy
 
 **Automatic (on push):**
+
 ```bash
 git push origin main
 
@@ -43,6 +45,7 @@ git push origin main
 ```
 
 **Manual trigger:**
+
 1. Go to: https://github.com/girijashankarj/garry-micro-dev-utilities/actions
 2. Select **Deploy to GitHub Pages** workflow
 3. Click **Run workflow** → **Run workflow**
@@ -50,10 +53,12 @@ git push origin main
 ### Step 4: Access Your Site
 
 After deployment completes (usually 1-2 minutes), your site will be live at:
+
 - **Main URL**: `https://girijashankarj.github.io/garry-micro-dev-utilities/`
 - **Direct link**: `https://girijashankarj.github.io/garry-micro-dev-utilities/index.html`
 
 Monitor deployment status at:
+
 - https://github.com/girijashankarj/garry-micro-dev-utilities/actions
 
 ## Troubleshooting
@@ -61,6 +66,7 @@ Monitor deployment status at:
 ### Error: "Get Pages site failed" or "HttpError: Not Found"
 
 **Fix:**
+
 1. Enable GitHub Pages first at: https://github.com/girijashankarj/garry-micro-dev-utilities/settings/pages
 2. Select "Deploy from a branch" → `main` → `/ (root)`
 3. Wait 1-2 minutes after enabling before running the workflow

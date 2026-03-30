@@ -2,7 +2,13 @@ import { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { toast } from 'sonner';
 
 type OutputFormat = 'fetch' | 'axios';
@@ -90,7 +96,7 @@ export function CurlVisualizer() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Curl Command Visualizer</CardTitle>
+          <CardTitle>cURL (command-line URL) command visualizer</CardTitle>
           <CardDescription>
             Parse curl commands, visualize headers/params/body, and convert to Fetch/Axios code
           </CardDescription>

@@ -51,4 +51,13 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - run: npm run build
+      - run: npm run build:web
+      - run: npm run build:extension
+      - name: Zip Chrome extension (manifest at zip root)
+        run: (cd dist-extension && zip -r ../chrome-extension.zip .)
+      - name: Upload Chrome extension artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: chrome-extension
+          path: chrome-extension.zip
+          retention-days: 14

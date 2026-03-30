@@ -69,9 +69,10 @@ export function SqlExplainer() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>SQL Query Explainer</CardTitle>
+          <CardTitle>Structured Query Language (SQL) query explainer</CardTitle>
           <CardDescription>
-            Explain SQL queries without execution. Detect joins, filters, and potential performance issues
+            Explain SQL queries without execution. Detect joins, filters, and potential performance
+            issues
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

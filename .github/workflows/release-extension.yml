@@ -1,0 +1,36 @@
+name: Release — attach Chrome extension zip
+
+# When you publish a GitHub Release, this workflow builds the MV3 bundle and
+# uploads `garry-micro-dev-utilities-chrome.zip` as a release asset (Chrome Web Store–ready layout).
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  attach:
+    name: Build and attach extension zip
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build:extension
+
+      - name: Zip Chrome extension (manifest at zip root)
+        run: (cd dist-extension && zip -r ../garry-micro-dev-utilities-chrome.zip .)
+
+      - name: Upload zip to the published release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: garry-micro-dev-utilities-chrome.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

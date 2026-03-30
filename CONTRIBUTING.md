@@ -46,6 +46,7 @@ Before submitting:
 ## Reporting Issues
 
 When reporting issues, please include:
+
 - Browser and version
 - Steps to reproduce
 - Expected vs actual behavior
@@ -54,6 +55,7 @@ When reporting issues, please include:
 ## Feature Requests
 
 Feature requests are welcome! Please:
+
 - Check if the feature already exists
 - Explain the use case
 - Consider the single-file, no-build philosophy

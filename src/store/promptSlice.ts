@@ -33,7 +33,7 @@ const STORAGE_KEYS = {
 
 function getInitialTheme(): ThemeMode {
   // Check localStorage first
-  const stored = loadFromStorage<ThemeMode>(STORAGE_KEYS.THEME, null);
+  const stored = loadFromStorage<ThemeMode | null>(STORAGE_KEYS.THEME, null);
   if (stored) return stored;
 
   // Check system preference

@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2026-02-09
 
 ### Added
+
 - Production-ready HTML viewer with security headers
 - Pinned CDN dependency versions for stability
 - Comprehensive error handling and validation
@@ -23,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive documentation
 
 ### Security
+
 - Content Security Policy (CSP) headers
 - X-Content-Type-Options: nosniff
 - X-Frame-Options: SAMEORIGIN
@@ -30,11 +32,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pinned CDN versions with integrity checks
 
 ### Changed
+
 - Improved error messages with actionable feedback
 - Enhanced UI with loading indicators
 - Better file handling with size limits
 
 ### Fixed
+
 - Improved browser compatibility
 - Better error recovery mechanisms
 

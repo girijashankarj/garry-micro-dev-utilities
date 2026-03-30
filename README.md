@@ -1,8 +1,8 @@
 # Garry Micro Dev Utilities
 
 <p align="center">
-  <strong>A collection of small, fast, browser-only developer tools</strong><br/>
-  that solve everyday engineering problems.
+  <strong>Local-first, browser-only developer utilities</strong><br/>
+  for JSON, APIs, data formats, planning, and architecture — no server, no login.
 </p>
 
 <p align="center">
@@ -11,444 +11,373 @@
   <img src="https://img.shields.io/badge/vite-7-purple?logo=vite" alt="Vite 7" />
   <img src="https://img.shields.io/badge/tailwind-4-blue?logo=tailwindcss" alt="Tailwind v4" />
   <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT License" />
-  <img src="https://img.shields.io/badge/status-production--ready-brightgreen" alt="Production Ready" />
+  <img src="https://img.shields.io/badge/PWA-enabled-blue" alt="Progressive Web App" />
 </p>
 
 ---
 
-## 🎯 Project Vision
+## Table of contents
 
-**Garry Micro Dev Utilities** is a curated platform of browser-only developer tools inspired by [ilovepdf.com](https://www.ilovepdf.com) but for developers.
-
-### Core Philosophy
-
-- ✅ **Small, sharp utilities** - Each tool does ONE thing well
-- ✅ **Zero backend** - Everything runs in your browser
-- ✅ **Zero login** - No authentication required
-- ✅ **Modern stack** - React 19, TypeScript, Vite
-- ✅ **Maximum daily usefulness** - Tools you'll actually use
-
-**This is NOT a SaaS. This is NOT a framework. This is a curated toolbox.**
+| Section                                                                            | What you will find                                       |
+| ---------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| [Vision and scope](#vision-and-scope)                                              | Product goals and non-goals                              |
+| [Glossary](#glossary)                                                              | Abbreviations used in the app and docs                   |
+| [Distribution](#distribution-web-progressive-web-app--pwa-chrome-extension-mobile) | Web, Progressive Web App (PWA), Chrome extension, phones |
+| [Quick start](#quick-start)                                                        | Clone, install, run, build                               |
+| [NPM scripts](#npm-scripts)                                                        | All package.json commands                                |
+| [Tool catalog](#tool-catalog)                                                      | Every utility with id, category, and summary             |
+| [Architecture](#architecture)                                                      | Diagrams: runtime, navigation, CI/CD                     |
+| [Security and privacy](#security-and-privacy)                                      | Local-only processing                                    |
+| [Technology stack](#technology-stack)                                              | Major dependencies                                       |
+| [Browser support](#browser-support)                                                | Supported clients                                        |
+| [Project structure](#project-structure)                                            | Repository layout                                        |
+| [Contributing and links](#contributing-and-links)                                  | How to extend the suite                                  |
 
 ---
 
-## 🚀 Quick Start
+## Vision and scope
 
-**Prerequisites**: Node.js >= 20.19 (recommended: v24.13.0), npm >= 10
+**Garry Micro Dev Utilities** is a curated **single-page application (SPA)** of small tools that run entirely in the browser. It is inspired by the “one job per page” clarity of sites like [ilovepdf.com](https://www.ilovepdf.com), but aimed at **software engineers, testers, and technical leads**.
 
-```bash
-# Clone the repo
-git clone https://github.com/girijashankarj/garry-micro-dev-utilities.git
-cd garry-micro-dev-utilities
+| Goal                                | Detail                                                                                                                           |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| **Local-first**                     | Workloads run in your browser; nothing is uploaded to an application backend by design.                                          |
+| **No account**                      | No sign-up, no API keys required to use the tools.                                                                               |
+| **Offline after load**              | The web build is a **Progressive Web App (PWA)** with a service worker so repeat visits can work offline once assets are cached. |
+| **Same codebase, multiple outputs** | One React codebase produces the **hosted site** and an optional **Chrome extension** bundle.                                     |
 
-# Install dependencies
-npm install
+**Non-goals:** This is not a software-as-a-service (SaaS) product, not a generic framework, and not a replacement for dedicated IDEs or API gateways.
 
-# Start development server
-npm run dev
+---
 
-# Build for production
-npm run build
+## Glossary
 
-# Run tests
-npm test
+User-facing copy in the app follows the pattern **full term (abbreviation)** where jargon first appears. This table aligns documentation with the same terms.
+
+| Abbreviation | Full form                                     | Typical use in this project                                   |
+| ------------ | --------------------------------------------- | ------------------------------------------------------------- |
+| **ADR**      | Architecture Decision Record                  | Structured decisions for tech choices; ADR builder tool.      |
+| **API**      | Application programming interface             | REST-style contracts, responses, and risk analysis.           |
+| **CI**       | Continuous integration                        | GitHub Actions workflows on push and pull requests.           |
+| **CSV**      | Comma-separated values                        | Table exports from several planning tools.                    |
+| **GDPR**     | General Data Protection Regulation            | Privacy checklist item in non-functional requirements (NFR).  |
+| **JSON**     | JavaScript Object Notation                    | Payloads, configs, diffing, formatting.                       |
+| **JWT**      | JSON Web Token                                | Token inspection and decoding tools.                          |
+| **LLM**      | Large language model                          | Token counting for prompt sizing and cost hints.              |
+| **NFR**      | Non-functional requirements                   | Quality attributes: security, performance, availability, etc. |
+| **npm**      | Node Package Manager                          | Package installs and dependency lockfile.                     |
+| **OpenAPI**  | OpenAPI Specification                         | Machine-readable API descriptions (often YAML or JSON).       |
+| **PII**      | Personally identifiable information           | Data that can identify individuals; masking tool.             |
+| **PWA**      | Progressive Web App                           | Installable web app with manifest and service worker.         |
+| **RACI**     | Responsible, Accountable, Consulted, Informed | Role assignment matrix for tasks.                             |
+| **RegExp**   | Regular expression                            | Pattern matching in the regex playground.                     |
+| **RPO**      | Recovery point objective                      | How much data loss is acceptable in a disaster.               |
+| **RTO**      | Recovery time objective                       | How long restore may take after an outage.                    |
+| **SQL**      | Structured Query Language                     | Query explanation without executing against a database.       |
+| **TLS**      | Transport Layer Security                      | Encryption in transit (often referred to with HTTPS).         |
+| **URL**      | Uniform Resource Locator                      | Links, query strings, encoding helpers.                       |
+| **URI**      | Uniform Resource Identifier                   | Broader identifier class; used in URL toolkit copy.           |
+| **YAML**     | YAML Ain’t Markup Language                    | Human-readable data serialization (often used for OpenAPI).   |
+| **cURL**     | Client URL (command-line tool)                | `curl` command parsing and code generation.                   |
+
+---
+
+## Distribution: web (Progressive Web App / PWA), Chrome extension, mobile
+
+| Channel              | Artifact                                      | Best for                                       | Mobile (Android / iOS)?                                                                                                 |
+| -------------------- | --------------------------------------------- | ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| **Hosted site**      | `npm run build:web` → `dist/`                 | Sharing one URL, full window size, PWA install | Yes — open the URL in the mobile browser; install via **Add to Home Screen** (PWA).                                     |
+| **Chrome extension** | `npm run build:extension` → `dist-extension/` | Quick access from Chrome toolbar (desktop)     | **No** — Chrome extensions are not the standard way to “install” on phones. Use the **same PWA URL** on mobile instead. |
+| **Source**           | This repository                               | Contributing, forking, custom hosting          | N/A                                                                                                                     |
+
+```mermaid
+flowchart TB
+  subgraph repo [Single repository]
+    Src[React plus TypeScript source]
+  end
+  subgraph web [Web build]
+    ViteWeb[Vite plus vite-plugin-pwa]
+    DistWeb[dist folder]
+  end
+  subgraph ext [Extension build]
+    ViteExt[vite.extension.config.ts]
+    DistExt[dist-extension folder]
+  end
+  subgraph users [Users]
+    Browser[Desktop and mobile browsers]
+    ChromeDesktop[Chrome desktop with extension]
+  end
+  Src --> ViteWeb
+  Src --> ViteExt
+  ViteWeb --> DistWeb
+  ViteExt --> DistExt
+  DistWeb --> Browser
+  DistExt --> ChromeDesktop
+  Browser --> PWAInstall[Add to Home Screen PWA on mobile]
 ```
 
-### Production Deployment
+**Mobile install (recommended path):** deploy or open the **hosted web app**, then use the browser’s **Add to Home Screen** (or equivalent). That uses the **web app manifest** and service worker from the PWA build — the same experience users expect on Android and iOS Safari, without an app store.
 
-**Deployed on GitHub Pages**
+### Install icon / app preview (Chrome and standalone mode)
 
-See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed instructions.
-
-**Quick Deploy:**
-1. Enable Pages at: https://github.com/girijashankarj/garry-micro-dev-utilities/settings/pages
-   - Source: `Deploy from a branch`
-   - Branch: `main`
-   - Folder: `/ (root)` → `/dist` (after build)
-2. Push to `main` branch
-3. Site will be live at: **https://girijashankarj.github.io/garry-micro-dev-utilities/**
-
-The GitHub Actions workflow will automatically build and deploy on every push to `main`.
+| Topic                                            | Detail                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Why the install preview was missing**          | Chrome’s install UI expects **PNG** icons (**192×192** and **512×512**). A manifest that only listed **SVG** often shows a blank or generic install preview. This repo now ships **`public/pwa-192.png`**, **`public/pwa-512.png`**, and **`public/apple-touch-icon.png`** (regenerated from `favicon.svg` via `npm run icons` or automatically before `build:web`).                                                     |
+| **Which browser for “like an app” (standalone)** | **Chrome or Edge** (desktop or Android): install from the menu → opens in its **own window** with `display: standalone`. **Safari (iOS / iPadOS)**: **Share → Add to Home Screen** — standalone home-screen icon (use **`apple-touch-icon`**). **Samsung Internet** (Android): similar to Chrome. Use the **real HTTPS URL** of the site (or `localhost` for dev); installability does not apply to raw `file://` pages. |
+| **After changing the logo**                      | Run **`npm run icons`** and commit the updated PNGs under **`public/`**.                                                                                                                                                                                                                                                                                                                                                 |
 
 ---
 
-## 🛠️ Available Tools
+## Quick start
 
-### Tools Overview
+**Prerequisites:** Node.js **>= 20.19** (project CI uses Node 24), **npm** (Node Package Manager) **>= 10**.
+
+| Step                   | Command                                                                     |
+| ---------------------- | --------------------------------------------------------------------------- |
+| Clone                  | `git clone https://github.com/girijashankarj/garry-micro-dev-utilities.git` |
+| Enter directory        | `cd garry-micro-dev-utilities`                                              |
+| Install                | `npm ci` or `npm install`                                                   |
+| Development server     | `npm run dev`                                                               |
+| Production web build   | `npm run build:web`                                                         |
+| Chrome extension build | `npm run build:extension`                                                   |
+| Both builds            | `npm run build:all`                                                         |
+
+**Load the unpacked extension:** run `npm run build:extension`, then in Chrome go to **Extensions → Load unpacked** and select the `dist-extension` folder.
+
+**Production deployment (GitHub Pages):** see [DEPLOYMENT.md](DEPLOYMENT.md). The live site is typically at **https://girijashankarj.github.io/garry-micro-dev-utilities/** when Pages is enabled on `main`.
+
+---
+
+## NPM scripts
+
+| Script                    | Purpose                                                               |
+| ------------------------- | --------------------------------------------------------------------- |
+| `npm run dev`             | Start Vite dev server                                                 |
+| `npm run build`           | Alias for `build:web`                                                 |
+| `npm run build:web`       | Typecheck (`tsc -b`) then Vite production build (includes PWA assets) |
+| `npm run build:extension` | Typecheck then extension bundle to `dist-extension/`                  |
+| `npm run build:all`       | `build:web` then `build:extension`                                    |
+| `npm run preview`         | Preview the web production build                                      |
+| `npm run lint`            | ESLint with zero warnings allowed                                     |
+| `npm run lint:fix`        | ESLint with auto-fix                                                  |
+| `npm run format`          | Prettier write                                                        |
+| `npm run format:check`    | Prettier check only                                                   |
+| `npm test`                | Jest with coverage                                                    |
+| `npm run validate`        | Sample OpenAPI validation helper script                               |
+
+---
+
+## Tool catalog
+
+All tools are registered in `src/common/constants.ts` (`TOOLS`) and mounted from `src/App.tsx`. **22** tools are listed below (id matches the route query parameter in the Chrome extension build and the `/tools/:id` path on the web).
+
+| Id                           | Name (as shown in UI)                                       | Category                  |
+| ---------------------------- | ----------------------------------------------------------- | ------------------------- |
+| `json-diff-tool`             | JavaScript Object Notation (JSON) diff (fixed left / right) | Developer Essentials      |
+| `encoding-utils`             | Base64 + JSON Web Token (JWT) decode                        | Developer Essentials      |
+| `json-diagram-workflow`      | JavaScript Object Notation (JSON) diagram & workflow        | Diagrams & Modeling       |
+| `url-toolkit`                | Uniform Resource Locator (URL) toolkit                      | Developer Essentials      |
+| `unix-time-converter`        | Unix time converter                                         | Developer Essentials      |
+| `regex-playground`           | Regular expression (RegExp) playground                      | Developer Essentials      |
+| `token-counter`              | Token counter                                               | Developer Essentials      |
+| `pii-removal`                | Personally identifiable information (PII) removal           | Developer Essentials      |
+| `openapi-viewer`             | Swagger / OpenAPI (API specification) preview               | APIs & Integration        |
+| `jwt-inspector`              | JSON Web Token (JWT) inspector                              | APIs & Integration        |
+| `api-response-diff`          | Application programming interface (API) response diff       | APIs & Integration        |
+| `curl-visualizer`            | cURL (command-line URL) command visualizer                  | APIs & Integration        |
+| `api-risk-analyzer`          | API contract risk analyzer (OpenAPI)                        | APIs & Integration        |
+| `json-yaml-formatter`        | JavaScript Object Notation (JSON) / YAML formatter          | Data & Files              |
+| `sql-explainer`              | Structured Query Language (SQL) query explainer             | Data & Files              |
+| `csv-explorer`               | Comma-separated values (CSV) explorer                       | Data & Files              |
+| `raci-matrix`                | Responsible, Accountable, Consulted, Informed (RACI) matrix | Planning & Delivery       |
+| `risk-register`              | Risk register                                               | Planning & Delivery       |
+| `meeting-action-tracker`     | Meeting notes & actions                                     | Planning & Delivery       |
+| `timeline-milestone-planner` | Timeline & milestones                                       | Planning & Delivery       |
+| `adr-builder`                | Architecture Decision Record (ADR) builder                  | Architecture & Governance |
+| `nfr-checklist`              | Non-functional requirements (NFR) checklist                 | Architecture & Governance |
 
 ```mermaid
 mindmap
   root((Garry Micro<br/>Dev Utilities))
-    Developer Tools
-      Token Counter
-      PII Removal Tool
-    API & Backend
-      OpenAPI Viewer
-      JWT Inspector
-      API Response Diff
-      Curl Visualizer
-      API Risk Analyzer
-    Data & Formats
-      JSON/YAML Formatter
-      CSV Explorer
-    Debugging & Security
-      SQL Explainer
+    DeveloperEssentials
+      JsonDiff
+      Base64JwtDecode
+      UrlToolkit
+      UnixTime
+      RegexPlayground
+      TokenCounter
+      PiiRemoval
+    DiagramsModeling
+      JsonDiagramWorkflow
+    ApisIntegration
+      OpenApiViewer
+      JwtInspector
+      ApiResponseDiff
+      CurlVisualizer
+      ApiRiskAnalyzer
+    DataFiles
+      JsonYamlFormatter
+      SqlExplainer
+      CsvExplorer
+    PlanningDelivery
+      RaciMatrix
+      RiskRegister
+      MeetingActions
+      TimelineMilestones
+    ArchitectureGovernance
+      AdrBuilder
+      NfrChecklist
 ```
-
-### API & Backend
-
-| Tool | Status | Description |
-|------|--------|-------------|
-| **OpenAPI Swagger Viewer** | ✅ Available | Upload OpenAPI YAML/JSON and render interactive API documentation |
-| **JWT Inspector** | ✅ Available | Decode and inspect JWT tokens offline. View header, payload, and expiration warnings |
-| **API Response Diff** | ✅ Available | Compare two JSON API responses and highlight semantic differences and breaking changes |
-| **Curl Command Visualizer** | ✅ Available | Parse curl commands, visualize headers/params/body, and convert to Fetch/Axios code |
-| **API Contract Risk Analyzer** | ✅ Available | Analyze OpenAPI specs for missing error responses, weak validation, and breaking change risks |
-
-### Data & Formats
-
-| Tool | Status | Description |
-|------|--------|-------------|
-| **JSON / YAML Formatter** | ✅ Available | Format, validate, minify JSON/YAML. Convert between formats. Copy formatted output |
-| **CSV Explorer** | ✅ Available | Upload CSV files, render as sortable table, search/filter rows, export to JSON |
-
-### Debugging & Security
-
-| Tool | Status | Description |
-|------|--------|-------------|
-| **SQL Query Explainer** | ✅ Available | Explain SQL queries without execution. Detect joins, filters, and potential performance issues |
-
-### Developer Tools
-
-| Tool | Status | Description |
-|------|--------|-------------|
-| **Token Counter** | ✅ Available | Count tokens in text or files using GPT tokenizer (cl100k_base). Features color-coded token visualization showing how text is tokenized, with hover tooltips for detailed token information. Includes side-by-side layout with token count statistics and interactive visualization |
-| **PII Removal Tool** | ✅ Available | Identify and mask Personally Identifiable Information (PII) from files. Enter keywords to find and mask sensitive data values with custom patterns. Advanced matching options: case sensitivity, complete/substring matching, word boundaries. Download masked files with original format preserved |
-
-**Total: 10 tools, all fully functional**
 
 ---
 
-## 🎨 Design Principles
+## Architecture
 
-### User Experience
-
-- **Simple & Clear**: No jargon, self-explanatory interfaces
-- **Fast**: Instant results, no waiting
-- **Private**: All processing happens in your browser
-- **Accessible**: Keyboard navigation, screen reader support
-- **Mobile-Friendly**: Works on all devices
-
-### Technical Constraints
-
-- ✅ Frontend only (React + TypeScript)
-- ✅ No backend, no database
-- ✅ No authentication
-- ✅ Modern build tooling (Vite)
-- ✅ Each tool works offline after load
-- ✅ No user data stored
-
----
-
-## 📁 Project Structure
-
-```
-garry-micro-dev-utilities/
-├── src/
-│   ├── components/          # React components
-│   │   ├── tools/          # Tool components
-│   │   ├── ui/             # shadcn/ui components
-│   │   └── shared/         # Shared components
-│   ├── hooks/              # Custom React hooks
-│   ├── lib/                # Core business logic
-│   │   └── utils/          # Utility functions
-│   ├── store/              # Redux Toolkit store
-│   ├── types/              # TypeScript types
-│   ├── common/             # Constants, messages
-│   ├── App.tsx             # Main app component
-│   ├── main.tsx            # Entry point
-│   └── index.css           # Global styles
-├── public/                 # Static assets
-│   └── samples/            # Sample data files
-│       └── pizza-store.yaml
-├── scripts/                # Utility scripts
-│   └── validate-openapi.js
-├── .github/workflows/      # CI/CD pipelines
-│   ├── ci.yml              # Continuous Integration
-│   ├── pr-check.yml        # PR checks
-│   └── deploy.yml          # GitHub Pages deployment
-├── README.md               # This file
-├── ARCHITECTURE.md         # Architecture documentation
-├── DEPLOYMENT.md           # GitHub Pages deployment guide
-├── TOOLS.md                # Detailed tool specifications
-├── CONTRIBUTING.md         # Contribution guidelines
-├── CHANGELOG.md            # Version history
-├── LICENSE                 # MIT License
-├── package.json            # Project metadata
-├── vite.config.ts          # Vite configuration
-├── tsconfig.json           # TypeScript configuration
-└── eslint.config.js        # ESLint configuration
-```
-
-**Modern React Architecture**: All tools are React components. Click a tool card in the dashboard to navigate to the tool component.
-
-### Architecture Diagram
-
-```mermaid
-graph TB
-    A[Vite Dev Server] --> B[React App]
-    B --> C[Dashboard Component]
-    B --> D[Tool Components]
-    
-    C --> E[Tool Cards Grid]
-    E --> E1[Developer Tools]
-    E --> F[API & Backend Tools]
-    E --> G[Data & Formats Tools]
-    E --> H[Debugging & Security Tools]
-    
-    E1 --> E1A[Token Counter]
-    E1 --> E1B[PII Removal Tool]
-    
-    F --> F1[OpenAPI Viewer]
-    F --> F2[JWT Inspector]
-    F --> F3[API Response Diff]
-    F --> F4[Curl Visualizer]
-    F --> F5[API Risk Analyzer]
-    
-    G --> G1[JSON/YAML Formatter]
-    G --> G2[CSV Explorer]
-    
-    H --> H1[SQL Explainer]
-    
-    I[User Clicks Card] --> J[React Router/Navigation]
-    J --> K[Render Tool Component]
-    J --> L[Hide Dashboard]
-    
-    K --> M[User Interacts]
-    M --> N[Browser Processing]
-    N --> O[Results Displayed]
-    
-    P[GitHub Actions] --> Q[Build with Vite]
-    Q --> R[Deploy to GitHub Pages]
-    R --> S[Live Site]
-    
-    style A fill:#e5e7eb,stroke:#374151,stroke-width:2px,color:#1f2937
-    style B fill:#e5e7eb,stroke:#374151,stroke-width:2px,color:#1f2937
-    style C fill:#f3f4f6,stroke:#6b7280,stroke-width:1px,color:#374151
-    style D fill:#f3f4f6,stroke:#6b7280,stroke-width:1px,color:#374151
-    style P fill:#d1d5db,stroke:#4b5563,stroke-width:2px,color:#1f2937
-    style Q fill:#d1d5db,stroke:#4b5563,stroke-width:2px,color:#1f2937
-    style R fill:#d1d5db,stroke:#4b5563,stroke-width:2px,color:#1f2937
-    style S fill:#d1d5db,stroke:#4b5563,stroke-width:2px,color:#1f2937
-```
-
-### Tool Flow Diagram
-
-```mermaid
-sequenceDiagram
-    participant User
-    participant Dashboard
-    participant React
-    participant Tool
-    participant Browser
-    
-    User->>Dashboard: Opens app
-    Dashboard->>User: Shows tool cards
-    
-    User->>Dashboard: Clicks tool card
-    Dashboard->>React: setSelectedTool(toolId)
-    React->>Dashboard: Hide dashboard
-    React->>Tool: Render tool component
-    
-    User->>Tool: Uploads file / Pastes data
-    Tool->>Browser: Process in browser
-    Browser->>Tool: Return results
-    Tool->>User: Display results
-    
-    User->>Tool: Clicks "Back to Home"
-    Tool->>React: setSelectedTool(null)
-    React->>Tool: Hide tool component
-    React->>Dashboard: Show dashboard
-    Dashboard->>User: Display tool cards
-```
-
-See [ARCHITECTURE.md](ARCHITECTURE.md) for detailed architecture.
-
----
-
-## 🔒 Security & Privacy
-
-```mermaid
-graph TB
-    A[User Input] --> B[Browser Processing]
-    B --> C{Validation}
-    C -->|Valid| D[Process Locally]
-    C -->|Invalid| E[Show Error]
-    
-    D --> F[Display Results]
-    F --> G[User Views Results]
-    
-    H[File Upload] --> I{Size Check}
-    I -->|>10MB| J[Reject]
-    I -->|<10MB| B
-    
-    K[NPM Packages] --> L[Pinned Versions]
-    L --> M[Security Audits]
-    M --> B
-    
-    N[No Backend] --> O[No Data Transmission]
-    O --> P[Privacy Guaranteed]
-    
-    style B fill:#e5e7eb,stroke:#374151,stroke-width:2px,color:#1f2937
-    style O fill:#d1d5db,stroke:#4b5563,stroke-width:2px,color:#1f2937
-    style P fill:#d1d5db,stroke:#4b5563,stroke-width:2px,color:#1f2937
-    style J fill:#fca5a5,stroke:#dc2626,stroke-width:2px,color:#991b1b
-```
-
-**Security Features:**
-- ✅ **No external requests** - Tools don't send data anywhere
-- ✅ **File size limits** - 10MB default limit per tool
-- ✅ **Input validation** - Client-side validation with TypeScript
-- ✅ **Error boundaries** - Graceful error handling
-- ✅ **Pinned dependencies** - All packages use specific versions
-- ✅ **Type safety** - TypeScript ensures type safety
-
-**All tools run entirely in your browser. No data is sent to any server.**
-
----
-
-## 🌐 Browser Support
-
-- ✅ Chrome/Edge (latest)
-- ✅ Firefox (latest)
-- ✅ Safari (latest)
-- ✅ Mobile browsers (iOS Safari, Chrome Mobile)
-
-Requires modern browser with ES6+ support.
-
----
-
-## 🛠️ Technology Stack
+### High-level runtime
 
 ```mermaid
 graph LR
-    A[React 19] --> B[TypeScript 5.9]
-    A --> C[Vite 7]
-    C --> D[Tailwind CSS v4]
-    D --> E[shadcn/ui]
-    
-    F[Redux Toolkit] --> A
-    G[Jest] --> H[Testing Library]
-    I[ESLint 9] --> J[Prettier]
-    
-    A --> K[Browser]
-    B --> K
-    C --> K
-    D --> K
-    E --> K
-    
-    K --> L[User Interface]
-    
-    style A fill:#e5e7eb,stroke:#374151,stroke-width:2px,color:#1f2937
-    style B fill:#e5e7eb,stroke:#374151,stroke-width:2px,color:#1f2937
-    style C fill:#e5e7eb,stroke:#374151,stroke-width:2px,color:#1f2937
-    style D fill:#e5e7eb,stroke:#374151,stroke-width:2px,color:#1f2937
-    style E fill:#e5e7eb,stroke:#374151,stroke-width:2px,color:#1f2937
-    style K fill:#d1d5db,stroke:#4b5563,stroke-width:2px,color:#1f2937
-    style L fill:#f3f4f6,stroke:#6b7280,stroke-width:1px,color:#374151
+  User[User] --> UI[React SPA]
+  UI --> State[Redux Toolkit]
+  UI --> Tools[Tool components]
+  Tools --> BrowserAPIs[Browser APIs]
+  WebBuild[PWA build] --> SW[Service worker]
+  SW --> Cache[Precache and runtime cache]
 ```
 
-**Dependencies:**
-- **React 19** — UI framework
-- **TypeScript 5.9** — Type safety
-- **Vite 7** — Build tool
-- **Tailwind CSS v4** — Styling
-- **shadcn/ui** — UI component library
-- **Redux Toolkit** — State management
-- **Swagger UI React** — OpenAPI rendering
-- **js-yaml** — YAML parsing
-- **jwt-decode** — JWT token decoding
-- **gpt-tokenizer** — Token counting and visualization
-- **lucide-react** — Icon library
-- **Jest + Testing Library** — Testing
-- **ESLint 9 + Prettier** — Code quality
+### In-app navigation (web vs extension)
+
+On the **web** build, the selected tool is reflected in the path **`/tools/:toolId`** (with optional GitHub Pages base path). On the **extension** build, the same state uses the query parameter **`?tool=`** so it does not collide with OpenAPI share links that use the URL **hash** fragment.
+
+```mermaid
+sequenceDiagram
+  participant User
+  participant App
+  participant Tool
+  User->>App: Open site or extension popup
+  App->>User: Show library or restore tool from URL
+  User->>App: Choose tool
+  App->>Tool: Render tool component
+  User->>Tool: Paste upload or edit data
+  Tool->>User: Show results in browser only
+  User->>App: Back to library
+  App->>User: Show library again
+```
+
+### Continuous integration and deployment
+
+```mermaid
+flowchart LR
+  Push[Push or PR] --> GHA[GitHub Actions]
+  GHA --> Lint[Lint]
+  GHA --> Test[Test]
+  GHA --> BuildWeb[build:web]
+  GHA --> BuildExt[build:extension]
+  PushMain[Push to main] --> Deploy[deploy.yml]
+  Deploy --> Pages[GitHub Pages artifact]
+```
 
 ---
 
-## 📝 Development
+## Security and privacy
 
-### Available Scripts
+| Topic                       | Behavior                                                                                                                                               |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Data leaving the device** | Tools are designed to process input locally. There is no first-party backend in this repository.                                                       |
+| **Third-party calls**       | Optional links (for example to **npm** package pages or documentation) open in a new tab; core tools do not require calling your APIs from our server. |
+| **Files**                   | Large uploads are bounded per tool (for example OpenAPI files up to **10 MB** in the viewer).                                                          |
+| **Extension permissions**   | The MV3 manifest ships with **no host permissions**; see `scripts/extension-scope.json` for the rationale.                                             |
 
-- `npm run dev` — Start development server
-- `npm run build` — Build for production
-- `npm run preview` — Preview production build
-- `npm run lint` — Run ESLint
-- `npm run lint:fix` — Fix ESLint errors
-- `npm run format` — Format code with Prettier
-- `npm run format:check` — Check code formatting
-- `npm test` — Run tests with coverage
-- `npm run test:coverage` — Run tests with coverage report
-
-### Code Quality
-
-- **Type checking**: `tsc -b`
-- **Linting**: ESLint 9 (flat config)
-- **Formatting**: Prettier
-- **Testing**: Jest + Testing Library (80% coverage minimum)
+```mermaid
+flowchart TB
+  Input[User input and files] --> Local[In-browser processing]
+  Local --> Out[Results on screen or clipboard]
+  Input -.->|No project backend| Nowhere[No Garry server]
+```
 
 ---
 
-## 📝 Contributing
+## Technology stack
 
-We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-### Adding a New Tool
-
-1. Create a new component in `src/components/tools/`
-2. Add the tool to `src/common/constants.ts` (TOOLS array)
-3. Import and add to `TOOL_COMPONENTS` mapping in `src/App.tsx`
-4. Update this README with the new tool
-5. Write tests for the new tool
-6. Submit a pull request
-
-See [TOOLS.md](TOOLS.md) for detailed tool specifications and patterns.
-
-### Commit Convention
-
-This project uses [Conventional Commits](https://www.conventionalcommits.org/).
+| Layer                       | Choice                                                |
+| --------------------------- | ----------------------------------------------------- |
+| UI                          | React 19, TypeScript                                  |
+| Styling                     | Tailwind CSS v4, **shadcn**-style Radix UI primitives |
+| State                       | Redux Toolkit                                         |
+| Build                       | Vite 7, `@vitejs/plugin-react`                        |
+| PWA                         | `vite-plugin-pwa` with `injectManifest` (`src/sw.ts`) |
+| OpenAPI UI                  | `swagger-ui-react`, `js-yaml`                         |
+| JWT decode (inspector tool) | `jwt-decode`                                          |
+| Tokenizer                   | `gpt-tokenizer`                                       |
+| Quality                     | ESLint 9, Prettier, Jest, Testing Library             |
 
 ---
 
-## 📄 License
+## Browser support
 
-MIT License - see [LICENSE](LICENSE) file for details.
+| Client        | Notes                                                                        |
+| ------------- | ---------------------------------------------------------------------------- |
+| Chrome / Edge | Fully supported; extension targets Chromium.                                 |
+| Firefox       | Supported for the web app.                                                   |
+| Safari        | Supported; PWA install behavior follows **iOS** / **macOS** Safari rules.    |
+| Mobile        | Use the **web/PWA** URL; test **Add to Home Screen** on your target devices. |
 
----
-
-## 🙏 Acknowledgments
-
-- Inspired by [ilovepdf.com](https://www.ilovepdf.com)
-- Built with [React](https://react.dev) and [Vite](https://vitejs.dev)
-- Styled with [Tailwind CSS](https://tailwindcss.com)
-- UI components from [shadcn/ui](https://ui.shadcn.com)
-- OpenAPI rendering by [Swagger UI](https://swagger.io/tools/swagger-ui/)
-- YAML parsing by [js-yaml](https://github.com/nodeca/js-yaml)
-- Token counting by [gpt-tokenizer](https://github.com/niieani/gpt-tokenizer)
-- Icons from [Lucide](https://lucide.dev)
+Requires a modern **ECMAScript** environment (ES2022 class fields and standard Web APIs used by Vite’s browser target).
 
 ---
 
-## 🔗 Links
+## Project structure
 
-- **Live Site**: https://girijashankarj.github.io/garry-micro-dev-utilities/
-- **Repository**: https://github.com/girijashankarj/garry-micro-dev-utilities
-- **Issues**: https://github.com/girijashankarj/garry-micro-dev-utilities/issues
-- **Deployment Guide**: [DEPLOYMENT.md](DEPLOYMENT.md)
-- **Architecture**: [ARCHITECTURE.md](ARCHITECTURE.md)
-- **Tool Specifications**: [TOOLS.md](TOOLS.md)
+```
+garry-micro-dev-utilities/
+├── extension/                 # Chrome MV3 manifest (copied into dist-extension)
+├── public/                    # Static assets (favicon, robots.txt)
+├── samples/                   # Example OpenAPI YAML
+├── scripts/                   # validate-openapi.js, extension-scope.json
+├── src/
+│   ├── App.tsx                # Library + tool routing
+│   ├── main.tsx               # Web entry (PWA registration)
+│   ├── extension-main.tsx     # Extension entry (no service worker)
+│   ├── components/tools/      # One folder per tool
+│   ├── components/ui/         # Shared UI primitives
+│   ├── common/constants.ts    # TOOLS definitions and BRAND copy
+│   ├── config/distribution.ts # PWA vs extension vs mobile notes
+│   ├── lib/                   # Routing, search, OpenAPI helpers
+│   ├── store/                 # Redux store
+│   └── sw.ts                  # Service worker source for PWA
+├── vite.config.ts             # Web + PWA
+├── vite.extension.config.ts   # Extension bundle
+├── full.html                  # Extension HTML entry
+└── .github/workflows/         # ci.yml, pr-check.yml, deploy.yml
+```
+
+---
+
+## Contributing and links
+
+- **Contributing:** [CONTRIBUTING.md](CONTRIBUTING.md)
+- **Tool patterns:** [TOOLS.md](TOOLS.md)
+- **Architecture deep dive:** [ARCHITECTURE.md](ARCHITECTURE.md)
+- **Deploy:** [DEPLOYMENT.md](DEPLOYMENT.md)
+- **Changelog:** [CHANGELOG.md](CHANGELOG.md)
+- **License:** [LICENSE](LICENSE) (MIT)
+
+| Resource   | URL                                                                |
+| ---------- | ------------------------------------------------------------------ |
+| Live site  | https://girijashankarj.github.io/garry-micro-dev-utilities/        |
+| Repository | https://github.com/girijashankarj/garry-micro-dev-utilities        |
+| Issues     | https://github.com/girijashankarj/garry-micro-dev-utilities/issues |
+
+### Adding a tool
+
+1. Add a component under `src/components/tools/`.
+2. Append a `ToolDefinition` to `TOOLS` in `src/common/constants.ts`.
+3. Register the component in `TOOL_COMPONENTS` in `src/App.tsx`.
+4. Run `npm run lint` and `npm run build:all`.
+5. Update **this README** tool table and any focused docs if needed.
 
 ---
 
 <p align="center">
-  Made with ❤️ for developers who value simplicity and privacy
+  Built for developers who want small, sharp utilities without giving data to a server.
 </p>

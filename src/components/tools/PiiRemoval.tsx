@@ -5,7 +5,13 @@ import { FileInput } from '@/components/ui/file-input';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { InfoTooltip, Tooltip } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
 
@@ -32,11 +38,11 @@ export function PiiRemoval() {
 
     const ext = file.name.split('.').pop()?.toLowerCase() || '';
     const mimeType = file.type || '';
-    
+
     // Store original file name and extension for download
     setOriginalFileName(file.name);
     setFileExtension(ext ? `.${ext}` : '.txt');
-    
+
     // Determine file type
     let detectedType = 'Unknown';
     if (ext === 'json' || mimeType.includes('json')) {
@@ -73,34 +79,37 @@ export function PiiRemoval() {
       .filter(Boolean);
   }, [keywords]);
 
-  const buildPattern = useCallback((keyword: string): RegExp => {
-    // Escape special regex characters
-    const escapedKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    
-    // Build pattern based on match type
-    let pattern: string;
-    
-    if (matchType === 'complete') {
-      // Complete string match - exact match only
-      if (wordBoundary === 'word-boundary') {
-        pattern = `\\b${escapedKeyword}\\b`;
+  const buildPattern = useCallback(
+    (keyword: string): RegExp => {
+      // Escape special regex characters
+      const escapedKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+      // Build pattern based on match type
+      let pattern: string;
+
+      if (matchType === 'complete') {
+        // Complete string match - exact match only
+        if (wordBoundary === 'word-boundary') {
+          pattern = `\\b${escapedKeyword}\\b`;
+        } else {
+          pattern = escapedKeyword;
+        }
       } else {
-        pattern = escapedKeyword;
+        // Substring match - can match part of a word
+        if (wordBoundary === 'word-boundary') {
+          pattern = `\\b${escapedKeyword}`;
+        } else {
+          pattern = escapedKeyword;
+        }
       }
-    } else {
-      // Substring match - can match part of a word
-      if (wordBoundary === 'word-boundary') {
-        pattern = `\\b${escapedKeyword}`;
-      } else {
-        pattern = escapedKeyword;
-      }
-    }
-    
-    // Build regex flags
-    const flags = caseSensitive === 'case-insensitive' ? 'gi' : 'g';
-    
-    return new RegExp(pattern, flags);
-  }, [matchType, caseSensitive, wordBoundary]);
+
+      // Build regex flags
+      const flags = caseSensitive === 'case-insensitive' ? 'gi' : 'g';
+
+      return new RegExp(pattern, flags);
+    },
+    [matchType, caseSensitive, wordBoundary]
+  );
 
   const findMatches = useCallback(() => {
     if (!content.trim() || keywordList.length === 0) {
@@ -120,23 +129,17 @@ export function PiiRemoval() {
       );
       const matches1 = Array.from(content.matchAll(pattern1WithValue));
       const count1 = matches1.length;
-      
+
       // Pattern 2: Find keyword in JSON-like structures (e.g., "name": "John")
-      const pattern2 = new RegExp(
-        `"${pattern1.source}"\\s*:\\s*"([^"]+)"`,
-        pattern1.flags
-      );
+      const pattern2 = new RegExp(`"${pattern1.source}"\\s*:\\s*"([^"]+)"`, pattern1.flags);
       const matches2 = Array.from(content.matchAll(pattern2));
       const count2 = matches2.length;
-      
+
       // Pattern 3: Find keyword in quotes after colon (e.g., name: "John")
-      const pattern3 = new RegExp(
-        `${pattern1.source}\\s*:\\s*"([^"]+)"`,
-        pattern1.flags
-      );
+      const pattern3 = new RegExp(`${pattern1.source}\\s*:\\s*"([^"]+)"`, pattern1.flags);
       const matches3 = Array.from(content.matchAll(pattern3));
       const count3 = matches3.length;
-      
+
       // Also search for the keyword itself if it's a substring match
       let count4 = 0;
       if (matchType === 'substring') {
@@ -144,10 +147,10 @@ export function PiiRemoval() {
         const directMatches = Array.from(content.matchAll(directPattern));
         count4 = directMatches.length;
       }
-      
+
       // Total count (avoid double counting by taking max)
       const totalCount = Math.max(count1, count2, count3, count4);
-      
+
       if (totalCount > 0) {
         foundMatches.push({ keyword, count: totalCount });
       }
@@ -184,25 +187,19 @@ export function PiiRemoval() {
       masked = masked.replace(pattern1WithValue, (match, value) => {
         return match.replace(value, maskPattern);
       });
-      
+
       // Pattern 2: Replace values in JSON-like structures
       // e.g., "name": "John" -> "name": "[REDACTED]"
-      const pattern2 = new RegExp(
-        `"${pattern1.source}"\\s*:\\s*"([^"]+)"`,
-        pattern1.flags
-      );
+      const pattern2 = new RegExp(`"${pattern1.source}"\\s*:\\s*"([^"]+)"`, pattern1.flags);
       const matches2 = Array.from(masked.matchAll(pattern2));
       totalReplaced += matches2.length;
       masked = masked.replace(pattern2, (match, value) => {
         return match.replace(`"${value}"`, `"${maskPattern}"`);
       });
-      
+
       // Pattern 3: Replace values in quotes after colon
       // e.g., name: "John" -> name: "[REDACTED]"
-      const pattern3 = new RegExp(
-        `${pattern1.source}\\s*:\\s*"([^"]+)"`,
-        pattern1.flags
-      );
+      const pattern3 = new RegExp(`${pattern1.source}\\s*:\\s*"([^"]+)"`, pattern1.flags);
       const matches3 = Array.from(masked.matchAll(pattern3));
       totalReplaced += matches3.length;
       masked = masked.replace(pattern3, (match, value) => {
@@ -252,7 +249,7 @@ export function PiiRemoval() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    
+
     // Generate download filename
     let downloadName: string;
     if (originalFileName) {
@@ -263,7 +260,7 @@ export function PiiRemoval() {
       // Use timestamp if no original filename
       downloadName = `masked-content-${Date.now()}${fileExtension}`;
     }
-    
+
     a.download = downloadName;
     document.body.appendChild(a);
     a.click();
@@ -290,12 +287,12 @@ export function PiiRemoval() {
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
-            <CardTitle>PII Removal Tool</CardTitle>
+            <CardTitle>Personally identifiable information (PII) removal</CardTitle>
             <InfoTooltip content="Safely identify and mask Personally Identifiable Information (PII) like names, IDs, emails, phone numbers, and account details. Configure matching options for precise control over what gets masked." />
           </div>
           <CardDescription>
-            Identify and mask Personally Identifiable Information (PII) from files. Enter keywords to
-            find and mask sensitive data.
+            Identify and mask Personally Identifiable Information (PII) from files. Enter keywords
+            to find and mask sensitive data.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -304,10 +301,7 @@ export function PiiRemoval() {
               <label className="text-sm font-medium">Upload File</label>
               <InfoTooltip content="Upload files containing sensitive data. Supported formats: TXT, JSON, YAML, CSV, Markdown, and log files. The tool will identify and mask values associated with your keywords." />
             </div>
-            <FileInput
-              accept=".txt,.json,.yaml,.yml,.csv,.md,.log"
-              onChange={handleFileUpload}
-            />
+            <FileInput accept=".txt,.json,.yaml,.yml,.csv,.md,.log" onChange={handleFileUpload} />
           </div>
           {fileType && (
             <div className="p-3 bg-muted/50 rounded-md border border-border">
@@ -332,9 +326,7 @@ export function PiiRemoval() {
           </div>
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <label className="text-sm font-medium">
-                Keywords to find (comma-separated)
-              </label>
+              <label className="text-sm font-medium">Keywords to find (comma-separated)</label>
               <InfoTooltip content="Enter keywords that identify PII fields. The tool finds and masks the VALUES associated with these keywords. Example: 'name, email, phone' will mask values like 'name: John' → 'name: [REDACTED]'." />
             </div>
             <Input
@@ -343,10 +335,12 @@ export function PiiRemoval() {
               onChange={(e) => setKeywords(e.target.value)}
             />
             <p className="text-xs text-muted-foreground mt-1">
-              Enter keywords separated by commas (e.g., name, id, account, email). The tool will find and mask the VALUES associated with these keywords (e.g., "name: John" will mask "John").
+              Enter keywords separated by commas (e.g., name, id, account, email). The tool will
+              find and mask the VALUES associated with these keywords (e.g., "name: John" will mask
+              "John").
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <div className="flex items-center gap-2 mb-2">
@@ -366,13 +360,16 @@ export function PiiRemoval() {
                 Complete: exact match only. Substring: matches part of text.
               </p>
             </div>
-            
+
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <label className="text-sm font-medium">Case Sensitivity</label>
                 <InfoTooltip content="Case Insensitive: Matches 'Name', 'name', and 'NAME' all the same. Case Sensitive: Only matches the exact case you specify." />
               </div>
-              <Select value={caseSensitive} onValueChange={(value: CaseSensitive) => setCaseSensitive(value)}>
+              <Select
+                value={caseSensitive}
+                onValueChange={(value: CaseSensitive) => setCaseSensitive(value)}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -385,13 +382,16 @@ export function PiiRemoval() {
                 Whether to match case exactly or ignore case.
               </p>
             </div>
-            
+
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <label className="text-sm font-medium">Word Boundary</label>
                 <InfoTooltip content="Word Boundary: 'name' matches 'name' but not 'username' or 'surname'. No Word Boundary: 'name' matches anywhere, including within other words." />
               </div>
-              <Select value={wordBoundary} onValueChange={(value: WordBoundary) => setWordBoundary(value)}>
+              <Select
+                value={wordBoundary}
+                onValueChange={(value: WordBoundary) => setWordBoundary(value)}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -405,7 +405,7 @@ export function PiiRemoval() {
               </p>
             </div>
           </div>
-          
+
           <div>
             <div className="flex items-center gap-2 mb-2">
               <label className="text-sm font-medium">Mask pattern</label>
@@ -430,7 +430,12 @@ export function PiiRemoval() {
             </div>
             <div className="flex-1">
               <Tooltip content="Apply masking to all matched values. The masked content will be available for download or copy.">
-                <Button onClick={applyMasking} variant="outline" className="w-full" disabled={!content}>
+                <Button
+                  onClick={applyMasking}
+                  variant="outline"
+                  className="w-full"
+                  disabled={!content}
+                >
                   Apply Masking
                 </Button>
               </Tooltip>
@@ -444,8 +449,8 @@ export function PiiRemoval() {
           <CardHeader>
             <CardTitle>Match Results</CardTitle>
             <CardDescription>
-              Found {totalMatches} total match{totalMatches !== 1 ? 'es' : ''} across {matches.length}{' '}
-              keyword{matches.length !== 1 ? 's' : ''}
+              Found {totalMatches} total match{totalMatches !== 1 ? 'es' : ''} across{' '}
+              {matches.length} keyword{matches.length !== 1 ? 's' : ''}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -458,7 +463,9 @@ export function PiiRemoval() {
                   <div className="flex items-center gap-2">
                     <Badge variant="secondary">{match.keyword}</Badge>
                   </div>
-                  <div className="text-sm font-semibold">{match.count} match{match.count !== 1 ? 'es' : ''}</div>
+                  <div className="text-sm font-semibold">
+                    {match.count} match{match.count !== 1 ? 'es' : ''}
+                  </div>
                 </div>
               ))}
             </div>
@@ -475,7 +482,9 @@ export function PiiRemoval() {
                 <CardDescription>
                   Content with PII masked. Ready to download as{' '}
                   <code className="bg-muted px-1 rounded text-xs">
-                    {originalFileName ? `masked-${originalFileName.replace(/\.[^/.]+$/, '')}${fileExtension}` : `masked-content${fileExtension}`}
+                    {originalFileName
+                      ? `masked-${originalFileName.replace(/\.[^/.]+$/, '')}${fileExtension}`
+                      : `masked-content${fileExtension}`}
                   </code>
                 </CardDescription>
               </div>
@@ -490,11 +499,7 @@ export function PiiRemoval() {
             </div>
           </CardHeader>
           <CardContent>
-            <Textarea
-              value={maskedContent}
-              readOnly
-              className="font-mono text-sm min-h-48"
-            />
+            <Textarea value={maskedContent} readOnly className="font-mono text-sm min-h-48" />
           </CardContent>
         </Card>
       )}

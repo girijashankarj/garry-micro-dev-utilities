@@ -46,7 +46,7 @@ export function CsvExplorer() {
           setCsvData(parsed.slice(1));
           toast.success('CSV loaded successfully');
         }
-      } catch (err) {
+      } catch {
         toast.error('Failed to parse CSV');
       }
     };
@@ -83,9 +83,10 @@ export function CsvExplorer() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>CSV Explorer</CardTitle>
+          <CardTitle>Comma-separated values (CSV) explorer</CardTitle>
           <CardDescription>
-            Upload CSV files, render as sortable table, search/filter rows, export to JSON
+            Upload comma-separated values (CSV) files, render as a sortable table, search or filter
+            rows, export to JavaScript Object Notation (JSON)
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -98,7 +99,7 @@ export function CsvExplorer() {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
               <Button onClick={exportToJson} variant="outline" className="w-full">
-                Export to JSON
+                Export to JSON (JavaScript Object Notation)
               </Button>
             </>
           )}

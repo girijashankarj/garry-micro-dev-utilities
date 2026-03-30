@@ -8,7 +8,7 @@ import { InfoTooltip } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
 
 interface JwtPayload {
-  [key: string]: any;
+  [key: string]: unknown;
   exp?: number;
   iat?: number;
   nbf?: number;
@@ -22,14 +22,14 @@ export function JwtInspector() {
 
   const decodeToken = useCallback(() => {
     if (!token.trim()) {
-      setError('Please enter a JWT token');
+      setError('Please enter a JSON Web Token (JWT)');
       return;
     }
 
     try {
       const parts = token.trim().split('.');
       if (parts.length !== 3) {
-        throw new Error('Invalid JWT format');
+        throw new Error('Invalid JSON Web Token (JWT) format');
       }
 
       const decodedHeader = JSON.parse(atob(parts[0].replace(/-/g, '+').replace(/_/g, '/')));
@@ -38,13 +38,14 @@ export function JwtInspector() {
       setHeader(decodedHeader);
       setPayload(decodedPayload);
       setError(null);
-      toast.success('JWT decoded successfully');
+      toast.success('JSON Web Token (JWT) decoded successfully');
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to decode JWT';
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to decode JSON Web Token (JWT)';
       setError(errorMessage);
       setHeader(null);
       setPayload(null);
-      toast.error('Failed to decode JWT');
+      toast.error('Failed to decode JSON Web Token (JWT)');
     }
   }, [token]);
 
@@ -58,21 +59,22 @@ export function JwtInspector() {
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
-            <CardTitle>JWT Inspector</CardTitle>
-            <InfoTooltip content="Decode JWT tokens without sending them to any server. View the header (algorithm, token type) and payload (claims, expiration). All processing happens locally in your browser for security." />
+            <CardTitle>JSON Web Token (JWT) inspector</CardTitle>
+            <InfoTooltip content="Decode JSON Web Tokens (JWT) without sending them to any server. View the header (algorithm, token type) and payload (claims, expiration). All processing happens locally in your browser for security." />
           </div>
           <CardDescription>
-            Decode and inspect JWT tokens offline. View header, payload, and expiration warnings
+            Decode and inspect JSON Web Token (JWT) strings offline. View header, payload, and
+            expiration warnings
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <label className="text-sm font-medium">JWT Token</label>
-              <InfoTooltip content="Paste a JWT token (format: header.payload.signature). The token will be decoded to show the header and payload. No signature verification is performed - this is for inspection only." />
+              <label className="text-sm font-medium">JSON Web Token (JWT)</label>
+              <InfoTooltip content="Paste a JSON Web Token (JWT), format: header.payload.signature. The token is decoded to show the header and payload. No signature verification is performed — inspection only." />
             </div>
             <Textarea
-              placeholder="Paste your JWT token here..."
+              placeholder="Paste your JSON Web Token (JWT) here…"
               value={token}
               onChange={(e) => setToken(e.target.value)}
               className="font-mono text-sm"
@@ -94,7 +96,7 @@ export function JwtInspector() {
             <CardHeader>
               <div className="flex items-center gap-2">
                 <CardTitle>Header</CardTitle>
-                <InfoTooltip content="JWT header contains metadata about the token: algorithm used (alg), token type (typ), and other optional fields. This is base64url encoded." />
+                <InfoTooltip content="The JSON Web Token (JWT) header contains metadata: algorithm (alg), token type (typ), and optional fields. It is base64url-encoded." />
               </div>
             </CardHeader>
             <CardContent>
@@ -109,7 +111,7 @@ export function JwtInspector() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <CardTitle>Payload</CardTitle>
-                  <InfoTooltip content="JWT payload contains the claims (data) in the token. Common claims include: exp (expiration), iat (issued at), sub (subject), and custom claims. Expiration status is shown automatically." />
+                  <InfoTooltip content="The JSON Web Token (JWT) payload contains claims (data). Common claims: exp (expiration), iat (issued at), sub (subject), and custom claims. Expiration status is shown automatically." />
                 </div>
                 {isExpired && <Badge variant="destructive">Expired</Badge>}
                 {!isExpired && expiresIn !== null && (
