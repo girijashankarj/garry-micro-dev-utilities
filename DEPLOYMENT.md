@@ -107,6 +107,10 @@ To use a custom domain:
 - [ ] HTTPS is enabled (automatic on GitHub Pages)
 - [ ] Mobile view works correctly
 
+## Pending Items
+
+- [ ] Add Chrome Web Store automation in GitHub Actions (upload + publish extension zip using OAuth secrets).
+
 ## GitHub Pages Limitations
 
 - **Repository must be public** (or GitHub Pro for private repos)
