@@ -56,7 +56,7 @@ jobs:
       - name: Zip Chrome extension (manifest at zip root)
         run: (cd dist-extension && zip -r ../chrome-extension.zip .)
       - name: Upload Chrome extension artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: chrome-extension
           path: chrome-extension.zip
