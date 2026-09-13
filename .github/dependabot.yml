@@ -1,24 +1,23 @@
 version: 2
+
+multi-ecosystem-groups:
+  all-dependencies:
+    schedule:
+      interval: "weekly"
+
 updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 1
     cooldown:
       default-days: 7
-    groups:
-      security-updates:
-        applies-to: security-updates
-        patterns:
-          - "*"
-      minor-patch-updates:
-        update-types:
-          - "minor"
-          - "patch"
-        patterns:
-          - "*"
+    multi-ecosystem-group: "all-dependencies"
+
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
+    open-pull-requests-limit: 1
+    multi-ecosystem-group: "all-dependencies"
