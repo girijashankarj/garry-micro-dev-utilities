@@ -30,3 +30,4 @@ jobs:
           fi
           git commit -m "chore(deps): finalize consolidated dependency state"
           git push
+      - run: echo "regenerate-lockfile"
