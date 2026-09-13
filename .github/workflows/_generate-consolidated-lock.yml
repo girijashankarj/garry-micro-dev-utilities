@@ -29,3 +29,4 @@ jobs:
           git add package-lock.json
           git commit -m "chore(deps): regenerate consolidated package-lock"
           git push
+      - run: echo "Consolidated lockfile generation complete"
